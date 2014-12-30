@@ -27,16 +27,19 @@ else( MATLAB_FOUND )
   endif( OCTAVE_FOUND )
 endif(MATLAB_FOUND)
 
-find_package(EIGEN)
-
-include_directories(${MATLAB_INCLUDE_DIRS} ${EIGEN_INCLUDE_DIRS} "../.." "." )
+include_directories(${MATLAB_INCLUDE_DIRS}  )
 
 if (POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
 endif()
 
+if (POLICY CMP0042)
+  cmake_policy(SET CMP0042 NEW)
+endif()
+
 set(MEXES example_mex_function)
 
+# This comes from FindMATLAB.cmake
 FOREACH(t ${MEXES})
   add_matlab_mex(NAME ${t} 
 		SRC ${t}.cxx 
