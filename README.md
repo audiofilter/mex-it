@@ -11,12 +11,14 @@ However, the code was completely reworked to use as many classes from std C++11 
 Currently code to callback matlab is not part of this library.
 This supports basic C++ data types. Soon support for Eigen Matrices will be added.
 
-How do the compiler know the inputs and outputs?
+##How do the compiler know the inputs and outputs?
 		Non-const references mean outputs
+
 		Everything else are inputs
 
 ### Build status - Mac OS X with Clang
 Currently doesn't work on Travis due to limitations
+
 But this does build on Mac OS X 10.10 with Clang 6 and recent Linux with GCC 4.9.2
 
 [![Build Status](https://travis-ci.org/audiofilter/mex-it.png)](https://travis-ci.org/audiofilter/mex-it)
