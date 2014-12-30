@@ -15,3 +15,5 @@ How do the compiler know the inputs and outputs?
 		Non-const references mean outputs
 		Everything else are inputs
 
+### Build status - Mac OS X with Clang
+[![Build Status](https://travis-ci.org/audiofilter/mex-it.png)](https://travis-ci.org/audiofilter/mex-it)
