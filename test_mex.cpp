@@ -1,25 +1,24 @@
+#include "mex_function.h"
 #include "mex_stuff.h"
-#include "mex.h"
-#include <iostream>
 
 using namespace mex_binding;
 using namespace std;
 
-void mex_function(const double &x, const double &y, const double& z, double& result) {
-	result = int((x + y)*z);
-	cout << __FILE__ << " => mex_function: result of (" << x << " + " << y << ") * " << z << " is: " << result << endl;
-}
-
 #include "mex_wrap.cxx"
 
+#include <iostream>
 int main() {
 
 	int nrhs = 3;
 	int nlhs = 1;
 
-	mxArray *in1 = mxCreateDoubleScalar(3.0);
-	mxArray *in2 = mxCreateDoubleScalar(4.0);
-	mxArray *in3 = mxCreateDoubleScalar(5.0);
+	double x=3.0;
+	double y=4.0;
+	double z=5.0;
+
+	mxArray *in1 = mxCreateDoubleScalar(x);
+	mxArray *in2 = mxCreateDoubleScalar(y);
+	mxArray *in3 = mxCreateDoubleScalar(z);
 
 	mxArray *out1 = mxCreateDoubleScalar(-1.0);
 
@@ -32,5 +31,9 @@ int main() {
 	plhs[0] = out1;
 
 	call_mex_function(mex_function, nlhs, plhs, nrhs, prhs);
+
+	double result = mxGetScalar(plhs[0]);
+
+	cout << __FILE__ << " => mex_function: result of (" << x << " + " << y << ") * " << z << " is: " << result << endl;
 
 }

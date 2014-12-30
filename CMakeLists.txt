@@ -44,11 +44,11 @@ set(MEXES example_mex_function)
 # This comes from FindMATLAB.cmake
 FOREACH(t ${MEXES})
   add_matlab_mex(NAME ${t} 
-		SRC ${t}.cxx 
+		SRC ${t}.cxx mex_function.cpp
 		LINK_TO ${MATLAB_LIBRARIES})
 ENDFOREACH(t ${MEXES})
 
-add_executable(test_mex test_mex.cpp)
+add_executable(test_mex test_mex.cpp mex_function.cpp)
 target_link_libraries(test_mex ${MATLAB_LIBRARIES})
 
 SET(LIBRARY_OUTPUT_PATH ..)
