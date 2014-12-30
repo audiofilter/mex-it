@@ -1,6 +1,8 @@
 #ifndef MEX_TRAITS_
 #define MEX_TRAITS_
 
+// The MIT License (MIT) Copyright (c) Tony Kirke 2014
+
 #include <string>  
 #include <algorithm>
 #include <new>      

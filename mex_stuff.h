@@ -5,6 +5,8 @@
 #include "mex_traits.h"
 #include <vector>
 
+// The MIT License (MIT) Copyright (c) Tony Kirke 2014
+
 namespace mex_binding 
 {
 	// ----------------------------------------------------------------------------------------
