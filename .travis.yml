@@ -1,9 +1,14 @@
+os:
+  - osx
 language: 
-  - cpp 
-install:
-  - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq cmake octave liboctave-dev
+  - objective-c
+compiler:
+  - clang
+before_install:
+  - brew update
+  - brew tap homebrew/science
+# Change this to your needs
+  - brew install cmake octave
 before_script:
   - mkdir build
   - cd build
