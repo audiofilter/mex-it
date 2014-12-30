@@ -1,5 +1,13 @@
 cmake_minimum_required(VERSION 2.8.4)
 
+if (POLICY CMP0054)
+  cmake_policy(SET CMP0054 NEW)
+endif()
+
+if (POLICY CMP0042)
+  cmake_policy(SET CMP0042 NEW)
+endif()
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}")
 SET(CMAKE_BUILD_TYPE "DEBUG")
 
@@ -8,6 +16,7 @@ PROJECT(mex_functions)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11 -fPIC")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -DMX_COMPAT_32 -DMATLAB_MEX_FILE")
 
+set(MATLAB_MEX_EXTENSION "mex")
 find_package( MATLAB COMPONENTS MX_LIBRARY)
 if ( MATLAB_FOUND )
   message( STATUS "Found Matlab at dir:     ${MATLAB_ROOT_DIR}" )
@@ -17,25 +26,18 @@ else( MATLAB_FOUND )
   find_package(OCTAVE)
   if (OCTAVE_FOUND)
     message( STATUS "Found Octave")
-		set(MATLAB_INCLUDE_DIRS ${OCTAVE_INCLUDE_DIRS})
 		set(MATLAB_LIBRARIES ${OCTAVE_LIBRARIES})
 		set(MATLAB_MEX_LIBRARIES ${OCTAVE_OCTINTERP_LIBRARY})
+		set(Matlab_MEX_LIBRARY ${OCTAVE_OCTINTERP_LIBRARY})
 		set(MATLAB_MX_LIBRARIES ${OCTAVE_OCT_LIB_DIR})
+		set(Matlab_MEX_EXTENSION "mex")
 		set(MATLAB_MEX_EXTENSION "mex")
   else()
     message( STATUS "No Octave!")
   endif( OCTAVE_FOUND )
 endif(MATLAB_FOUND)
 
-include_directories(${MATLAB_INCLUDE_DIRS}  )
-
-if (POLICY CMP0054)
-  cmake_policy(SET CMP0054 NEW)
-endif()
-
-if (POLICY CMP0042)
-  cmake_policy(SET CMP0042 NEW)
-endif()
+include_directories(${MATLAB_INCLUDE_DIRS} ${OCTAVE_INCLUDE_DIRS} )
 
 set(MEXES example_mex_function)
 
