@@ -1,0 +1,15 @@
+os:
+  - osx
+language: 
+  - objective-c
+compiler:
+  - clang
+before_install:
+  - brew update
+# Change this to your needs
+  - brew install octave
+before_script:
+  - mkdir build
+  - cd build
+  - cmake ..
+script: make
