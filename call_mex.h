@@ -224,7 +224,8 @@ namespace mex_binding {
 		arg.resize(size);
 	}
 
-
+	// Use enable_if SFINAE idiom, see here for explanation http://en.wikibooks.org/wiki/More_C++_Idioms/enable-if
+	// or http://eli.thegreenplace.net/2014/sfinae-and-enable_if/
 	// Go through std::tuple arguments and populate with values from matlab
 	template<typename funct, std::size_t I=0, std::size_t N, typename Ts> inline typename std::enable_if< (I==N), void>::type
 	validate_args(const mxArray *array[], int& arg_idx, Ts& arg) { };
