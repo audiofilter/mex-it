@@ -3,7 +3,7 @@
 
 // Some original code from here
 // Copyright (C) 2012 Massachusetts Institute of Technology, Lincoln Laboratory
-// License: Boost Software License   See LICENSE.txt for the full license.
+// License: Boost Software License  
 // Authors: Davis E. King (davis@dlib.net)
 
 // C++11 additions and Variadic Template support

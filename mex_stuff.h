@@ -6,6 +6,8 @@
 #include <vector>
 
 // The MIT License (MIT) Copyright (c) Tony Kirke 2014
+// Nothing Matlab/Mex specific here but these are all helper classes and functions
+// for the mex process using Variadic Templates, etc
 
 namespace mex_binding 
 {
@@ -19,8 +21,11 @@ namespace mex_binding
 	};
 
 	// ----------------------------------------------------------------------------------------
+	// Array2d or Array are obsolete / not supported
 	template <typename T>    struct is_array2d : public default_is_kind_value      {    };
 	template <typename T>    struct is_array : public default_is_kind_value      {    };
+	// true if T is std::vector or array
+	template <typename T>    struct is_array_type {	const static bool value = is_std_vector<T>::value || is_array<T>::value;	};
 	template <typename T>    struct is_std_vector : public default_is_kind_value      {    };
 	template <typename T>    struct is_pair : public default_is_kind_value      {    };
 
@@ -31,22 +36,23 @@ namespace mex_binding
 	template <typename T> struct is_std_vector<const T&>{ const static bool value = is_std_vector<T>::value; };
 	template <typename T> struct is_std_vector<const T> { const static bool value = is_std_vector<T>::value; };
 
-	// true if T is std::vector or array
-	template <typename T> struct is_array_type {	const static bool value = is_std_vector<T>::value || is_array<T>::value;	};
 
+	// For checking if mex_function's arguments are either inputs or outputs (based on type)
 	// ----------------------------------------------------------------------------------------
 
 	template <typename T> struct is_input_type {
 		const static unsigned long value =
-			(!std::is_same<void, T>::value && (!std::is_reference<T>::value || is_const_type<T>::value)) ? 1 : 0;
+			(!std::is_same<void, T>::value && (!std::is_reference<T>::value || std::is_const<T>::value)) ? 1 : 0;
 	};
 
 	template <typename T> struct is_output_type {
 		const static unsigned long value =
-			(!std::is_same<void, T>::value && std::is_reference<T>::value && !is_const_type<T>::value) ? 1 : 0;
+			(!std::is_same<void, T>::value && std::is_reference<T>::value && !std::is_const<T>::value) ? 1 : 0;
 	};
 
 	// ----------------------------------------------------------------------------------------
+
+	// Variadic template to calculate number of input types used ------------------------------------
 
 	template <typename... Args> struct get_num_inputs;
  
@@ -60,6 +66,8 @@ namespace mex_binding
 
 	// ----------------------------------------------------------------------------------------
 
+	// Variadic template to calculate number of output types used -----------------------------
+
 	template <typename... Args> struct get_num_outputs;
  
 	template <typename T> struct get_num_outputs<T> {
@@ -72,6 +80,9 @@ namespace mex_binding
 
 	// ----------------------------------------------------------------------------------------
 
+	// Variadic template to work on a function pointer to garner information about the function
+	// not all functions are used here
+	
 	template <typename T> struct function_traits;
 
 	template <typename R, typename... Args> struct function_traits<R(Args...)> {
@@ -100,7 +111,9 @@ namespace mex_binding
 	};
 
 	// ----------------------------------------------------------------------------------------
-	
+
+	// For getting the data type within a Matrix/Array2d/Array/Std::Vector
+
 	template <typename T, typename enabled = void> struct inner_type { typedef T type; };
 	
 	template <typename T>

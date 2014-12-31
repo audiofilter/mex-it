@@ -2,6 +2,11 @@
 #define MEX_TRAITS_
 
 // The MIT License (MIT) Copyright (c) Tony Kirke 2014
+// Also including code from http://github.com/masaers/funtup Markus Sears
+// for std::tuple unpacking
+
+// Mostly generic type traits, classes, etc for use in mex-it
+// Nothing Matlab specific here, maybe useful in other places
 
 #include <string>  
 #include <algorithm>
@@ -11,7 +16,6 @@
 #include <tuple>
 #include <functional>
 
-// Mostly generic type traits, classes, etc for use in mex-it
 namespace mex_binding {
 
 	template <bool B, class T = void> struct disable_if { typedef T type; };
@@ -21,6 +25,8 @@ namespace mex_binding {
 	template <class Cond, class T = void> struct disable_if_cond : public disable_if<Cond::value, T> {};
 	
 	// ----------------------------------------------------------------------------------------
+	// This is slightly different than std::is_const, since it is true for const T& also
+	// this is what we want to grepping input types
 	template <typename T> struct is_const_type { static const bool value = false; };
 	template <typename T> struct is_const_type<const T> { static const bool value = true; };
 	template <typename T> struct is_const_type<const T&> { static const bool value = true; };
@@ -33,20 +39,18 @@ namespace mex_binding {
 	{
 		using type = std::tuple<Ts..., T>;
 	};
-	// ----------------------------------------------------------------------------------------
 
+	// ----------------------------------------------------------------------------------------
 
 	// Apply std::decay on elements of a tuple to create a tuple of the basic decayed types
 	template <int N,typename... Args> struct function_args_tuple;
 	
 	template <int N, typename T> struct function_args_tuple<N,T> {
 		typedef typename std::tuple<typename std::decay<T>::type> root_type;
-		root_type val;
 	};
 	
 	template <int N, typename T, typename ...InTypes> struct function_args_tuple<N, T, InTypes...> {
 		typedef typename append_to_type_seq<typename std::decay<T>::type,typename function_args_tuple<N-1, InTypes...>::root_type>::type root_type;
-		root_type val;
 	};
 	// ----------------------------------------------------------------------------------------
 
@@ -71,18 +75,20 @@ namespace mex_binding {
 	//---------------------------------------------------------------------------------------------------
 
 	/// Automatic unpacking of function parameters.
-	///
-	/// Whever a single tuple is passed in as parameter, it is
-	/// automatically unpacked and the content is forwarded to the
-	/// wrapped function as parameters. Any other configuration of
-	/// parameters is forwarded to the wrapped function as is.
-	///
+	// Next 3 functions go together. There are also other ways to do this but 
+	// this is from github/funtup library
+	//
+	// Whever a single tuple is passed in as parameter, it is
+	// automatically unpacked and the content is forwarded to the
+	// wrapped function as parameters. Any other configuration of
+	// parameters is forwarded to the wrapped function as is.
+	//
 	// ---------------------------------------------------------------------- //
-	///
-	/// A function that unpacks its second argument and calls its
-	/// first argument with the unpacked parameter list. The third
-	/// parameter is needed for unpacking the second.
-	///
+	//
+	// A function that unpacks its second argument and calls its
+	// first argument with the unpacked parameter list. The third
+	// parameter is needed for unpacking the second.
+	//
 	template <typename Func, typename Args, int... I>
 	inline auto unpack_and_apply(  /// The function to call
 															 Func &&func,
@@ -95,10 +101,10 @@ namespace mex_binding {
 		return func(std::get<I>(args)...);
 	}
 	
-	///
-	/// A wrapper for a function to provide the automatic unpacking of
-	/// a single tuple into a parameter list.
-	///
+	//
+	// A wrapper for a function to provide the automatic unpacking of
+	// a single tuple into a parameter list.
+	//
 	template <typename Func> class apply_unpack_t {
 	public:
 		inline apply_unpack_t(Func &&func) : func_m(std::forward<Func>(func)) {}

@@ -38,3 +38,5 @@ using namespace mex_binding;
 using namespace std;
 #include "mex_wrap.cxx"
 ```
+
+### Then build with CMake or using mex within Matlab
