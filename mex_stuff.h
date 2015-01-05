@@ -11,9 +11,16 @@
 
 namespace mex_binding 
 {
-	// ----------------------------------------------------------------------------------------
 
 	struct default_is_kind_value { static const bool value = false; };
+	// ----------------------------------------------------------------------------------------
+
+	template <typename T> struct is_std_vector : public default_is_kind_value      {    };
+	template <typename T, typename alloc> struct is_std_vector<std::vector<T,alloc> >         { const static bool value = true; };
+	template <typename T> struct is_std_vector<T&>      { const static bool value = is_std_vector<T>::value; };
+	template <typename T> struct is_std_vector<const T&>{ const static bool value = is_std_vector<T>::value; };
+	template <typename T> struct is_std_vector<const T> { const static bool value = is_std_vector<T>::value; };
+
 
 	// ----------------------------------------------------------------------------------------
 	template <typename T, typename helper = void> struct is_matrix : public default_is_kind_value      {
@@ -26,15 +33,10 @@ namespace mex_binding
 	template <typename T>    struct is_array : public default_is_kind_value      {    };
 	// true if T is std::vector or array
 	template <typename T>    struct is_array_type {	const static bool value = is_std_vector<T>::value || is_array<T>::value;	};
-	template <typename T>    struct is_std_vector : public default_is_kind_value      {    };
 	template <typename T>    struct is_pair : public default_is_kind_value      {    };
 
 	// ----------------------------------------------------------------------------------------
 
-	template <typename T, typename alloc> struct is_std_vector<std::vector<T,alloc> >         { const static bool value = true; };
-	template <typename T> struct is_std_vector<T&>      { const static bool value = is_std_vector<T>::value; };
-	template <typename T> struct is_std_vector<const T&>{ const static bool value = is_std_vector<T>::value; };
-	template <typename T> struct is_std_vector<const T> { const static bool value = is_std_vector<T>::value; };
 
 
 	// For checking if mex_function's arguments are either inputs or outputs (based on type)
