@@ -23,8 +23,7 @@ This supports basic C++ data types. Soon support for Eigen Matrices may be added
 * Either Cmake or setup your own mex script
 * Mac OS X with Clang 6
 * Linux GCC 4.9.2
-Currently doesn't work on Travis due to limitations
-
+* Visual Studio 2013 
 
 ### Example
 Create a c++ implementation file like this
@@ -40,3 +39,9 @@ using namespace std;
 ```
 
 ### Then build with CMake or using mex within Matlab
+
+For single file example, you can do this in matlab (for recent GCC/Clang)
+
+mex CXXFLAGS="\$CXXFLAGS -std=c++11" simple_example.cpp
+
+(you may need to add libc++ to linking on Mac if you run into run-time issues)

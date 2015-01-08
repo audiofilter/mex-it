@@ -39,12 +39,12 @@ endif(MATLAB_FOUND)
 
 include_directories(${MATLAB_INCLUDE_DIRS} ${OCTAVE_INCLUDE_DIRS} )
 
-set(MEXES example_mex_function)
+set(MEXES simple_example vector_example)
 
 # This comes from FindMATLAB.cmake
 FOREACH(t ${MEXES})
   add_matlab_mex(NAME ${t} 
-		SRC ${t}.cxx mex_function.cpp
+		SRC ${t}.cpp
 		LINK_TO ${MATLAB_LIBRARIES})
 ENDFOREACH(t ${MEXES})
 
