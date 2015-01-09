@@ -37,7 +37,7 @@ namespace mex_binding {
 	template<typename, typename> struct append_to_type_seq { };
 	template<typename T, typename... Ts> struct append_to_type_seq<T, std::tuple<Ts...>>
 	{
-		using type = std::tuple<Ts..., T>;
+		using type = std::tuple<T,Ts...>;
 	};
 
 	// ----------------------------------------------------------------------------------------
