@@ -48,12 +48,12 @@ namespace mex_binding
 
 	template <typename T> struct is_input_type {
 		const static unsigned long value =
-			(!std::is_same<void, T>::value && (!std::is_reference<T>::value || std::is_const<T>::value)) ? 1 : 0;
+			(!std::is_same<void, T>::value && (!std::is_reference<T>::value || is_const_type<T>::value)) ? 1 : 0;
 	};
 
 	template <typename T> struct is_output_type {
 		const static unsigned long value =
-			(!std::is_same<void, T>::value && std::is_reference<T>::value && !std::is_const<T>::value) ? 1 : 0;
+			(!std::is_same<void, T>::value && std::is_reference<T>::value && !is_const_type<T>::value) ? 1 : 0;
 	};
 
 	// ----------------------------------------------------------------------------------------
