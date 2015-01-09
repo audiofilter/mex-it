@@ -19,7 +19,54 @@
 #include <sstream>
 
 namespace mex_binding {
-    // -------------------------------------------------------
+
+
+#ifdef EIGEN_MAJOR_VERSION
+
+	template <typename T> struct is_eigen_matrix<Eigen::Matrix<T,-1, -1, 0, -1, -1> > {
+		typedef T type;
+		static const bool value = true;
+	};
+
+	template <typename matrix_type, typename EXP>
+	typename std::enable_if<is_matrix<matrix_type>::value &&
+	std::is_same<typename inner_type<matrix_type>::type, typename EXP::type>::value>::type
+	assign_mat(const long arg_idx, matrix_type &m, const Eigen::Matrix<EXP, Eigen::Dynamic, Eigen::Dynamic> &src) {
+		if (matrix_type::NR != 0 && matrix_type::NR != src.nc()) {
+			std::ostringstream sout;
+			sout << "Argument " << arg_idx + 1 << " expects a matrix with " << matrix_type::NR << " rows but got one with "
+					 << src.nc();
+			mexErrMsgIdAndTxt("mex_function:validate_and_populate_arg", sout.str().c_str());
+		}
+		if (matrix_type::NC != 0 && matrix_type::NC != src.nr()) {
+			std::ostringstream sout;
+			sout << "Argument " << arg_idx + 1 << " expects a matrix with " << matrix_type::NC << " columns but got one with "
+					 << src.nr();
+			mexErrMsgIdAndTxt("mex_function:validate_and_populate_arg", sout.str().c_str());
+		}
+		
+		m = trans(src);
+	}
+	
+	template <typename matrix_type, typename EXP>
+	typename disable_if<(is_array2d<matrix_type>::value || is_matrix<matrix_type>::value) &&
+		std::is_same<typename inner_type<matrix_type>::type, typename EXP::type>::value>::type
+    assign_mat(const long arg_idx, matrix_type &, const Eigen::Matrix<EXP, Eigen::Dynamic, Eigen::Dynamic> &) {
+		std::ostringstream sout;
+		sout << "mex_function has some bug in it related to processing input argument " << arg_idx + 1;
+		mexErrMsgIdAndTxt("mex_function:validate_and_populate_arg", sout.str().c_str());
+	}
+	
+	// HACK!!!!
+	template <typename T>
+	const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> *pointer_to_matrix(const T *ptr, long nr, long nc) {
+		assert(nr > 0 && nc > 0);
+		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> x(nr, nc);
+		return &x;
+	}
+#endif
+	
+	// -------------------------------------------------------
 
     void assign_function_handle(const long arg_idx, function_handle &dest, const mxArray *src) {
         const_cast<void *&>(dest.h) = (void *)src;
@@ -38,7 +85,8 @@ namespace mex_binding {
     // ----------------------------------------------------------------------------------------
 
     template <typename T> typename enable_if_cond<is_matrix<T>>::type assign_to_matlab(mxArray *&plhs, const T &item) {
-        typedef typename T::type type;
+			typedef typename is_matrix<T>::type type;
+			//typedef typename T::type type;
 
         type *mat = 0;
         if (std::is_same<double, type>::value) {
@@ -91,6 +139,60 @@ namespace mex_binding {
         }
     }
 
+   template <typename T> typename enable_if_cond<is_eigen_matrix<T>>::type assign_to_matlab(mxArray *&plhs, const T &item) {
+		 typedef typename is_eigen_matrix<T>::type type;
+
+        type *mat = 0;
+        if (std::is_same<double, type>::value) {
+            plhs = mxCreateDoubleMatrix(item.rows(), item.cols(), mxREAL);
+            mat = (type *)mxGetPr(plhs);
+        } else if (std::is_same<float, type>::value) {
+            plhs = mxCreateNumericMatrix(item.rows(), item.cols(), mxSINGLE_CLASS, mxREAL);
+            mat = (type *)mxGetData(plhs);
+        } else if (std::is_same<bool, type>::value) {
+            plhs = mxCreateLogicalMatrix(item.rows(), item.cols());
+            mat = (type *)mxGetData(plhs);
+        } else if (std::is_same<uint8_t, type>::value) {
+            plhs = mxCreateNumericMatrix(item.rows(), item.cols(), mxUINT8_CLASS, mxREAL);
+            mat = (type *)mxGetData(plhs);
+        } else if (std::is_same<int8_t, type>::value) {
+            plhs = mxCreateNumericMatrix(item.rows(), item.cols(), mxINT8_CLASS, mxREAL);
+            mat = (type *)mxGetData(plhs);
+        } else if (std::is_same<int16_t, type>::value ||
+                   (std::is_same<short, type>::value && sizeof(short) == sizeof(int16_t))) {
+            plhs = mxCreateNumericMatrix(item.rows(), item.cols(), mxINT16_CLASS, mxREAL);
+            mat = (type *)mxGetData(plhs);
+        } else if (std::is_same<uint16_t, type>::value ||
+                   (std::is_same<unsigned short, type>::value && sizeof(unsigned short) == sizeof(uint16_t))) {
+            plhs = mxCreateNumericMatrix(item.rows(), item.cols(), mxUINT16_CLASS, mxREAL);
+            mat = (type *)mxGetData(plhs);
+        } else if (std::is_same<int32_t, type>::value ||
+                   (std::is_same<long, type>::value && sizeof(long) == sizeof(int32_t))) {
+            plhs = mxCreateNumericMatrix(item.rows(), item.cols(), mxINT32_CLASS, mxREAL);
+            mat = (type *)mxGetData(plhs);
+        } else if (std::is_same<uint32_t, type>::value ||
+                   (std::is_same<unsigned long, type>::value && sizeof(unsigned long) == sizeof(uint32_t))) {
+            plhs = mxCreateNumericMatrix(item.rows(), item.cols(), mxUINT32_CLASS, mxREAL);
+            mat = (type *)mxGetData(plhs);
+        } else if (std::is_same<uint64_t, type>::value ||
+                   (std::is_same<unsigned long, type>::value && sizeof(unsigned long) == sizeof(uint64_t))) {
+            plhs = mxCreateNumericMatrix(item.rows(), item.cols(), mxUINT64_CLASS, mxREAL);
+            mat = (type *)mxGetData(plhs);
+        } else if (std::is_same<int64_t, type>::value ||
+                   (std::is_same<long, type>::value && sizeof(long) == sizeof(int64_t))) {
+            plhs = mxCreateNumericMatrix(item.rows(), item.cols(), mxINT64_CLASS, mxREAL);
+            mat = (type *)mxGetData(plhs);
+        } else {
+            mexErrMsgIdAndTxt("mex_function:validate_and_populate_arg", "mex_function uses unsupported output argument type");
+        }
+
+        for (long c = 0; c < item.cols(); ++c) {
+            for (long r = 0; r < item.rows(); ++r) {
+                *mat++ = item(r, c);
+            }
+        }
+    }
+
 	// ----------------------------------------------------------------------------------------
 
 	void assign_to_matlab(mxArray *&plhs, const std::string &item) { plhs = mxCreateString(item.c_str()); }
@@ -102,7 +204,7 @@ namespace mex_binding {
 	*/
     
 	template <typename T>
-	typename disable_if<is_matrix<T>::value || is_array_type<T>::value || std::is_same<T, function_handle>::value>::type
+	typename disable_if<is_eigen_matrix<T>::value || is_matrix<T>::value || is_array_type<T>::value || std::is_same<T, function_handle>::value>::type
 	assign_to_matlab(mxArray *&plhs, const T &item) {
 		plhs = mxCreateDoubleScalar(item);
 	}
@@ -155,6 +257,129 @@ namespace mex_binding {
 				throw invalid_args_exception(sout.str());
 			}
 			assign_scalar(arg_idx, arg, mxGetScalar(prhs));
+		} else if (is_eigen_matrix<T>::value) {
+			typedef typename inner_type<T>::type type;
+			const int num_dims = mxGetNumberOfDimensions(prhs);
+			const long nr = mxGetM(prhs);
+			const long nc = mxGetN(prhs);
+
+			if (num_dims != 2) {
+				std::ostringstream sout;
+				sout << " argument " << arg_idx + 1 << " must be a 2-D matrix (got a " << num_dims << "-D matrix)";
+				throw invalid_args_exception(sout.str());
+			}
+			
+			if (std::is_same<type, double>::value) {
+				if (!mxIsDouble(prhs) || mxIsComplex(prhs)) {
+					std::ostringstream sout;
+					sout << " argument " << arg_idx + 1 << " must be a matrix of doubles";
+					throw invalid_args_exception(sout.str());
+				}
+				//?                assign_mat(arg_idx, arg ,
+				// pointer_to_matrix(mxGetPr(prhs), nc, nr));
+			} else if (std::is_same<type, float>::value) {
+				if (!mxIsSingle(prhs) || mxIsComplex(prhs)) {
+					std::ostringstream sout;
+					sout << " argument " << arg_idx + 1 << " must be a matrix of single/float";
+					throw invalid_args_exception(sout.str());
+				}
+				
+				//?                assign_mat(arg_idx, arg , pointer_to_matrix((const
+				// float*)mxGetData(prhs), nc, nr));
+			} else if (std::is_same<type, bool>::value) {
+				if (!mxIsLogical(prhs)) {
+					std::ostringstream sout;
+					sout << " argument " << arg_idx + 1 << " must be a matrix of logical elements.";
+					throw invalid_args_exception(sout.str());
+				}
+				
+				//?                assign_mat(arg_idx, arg , pointer_to_matrix((const
+				// bool*)mxGetData(prhs), nc, nr));
+			} else if (std::is_same<type, uint8_t>::value) {
+				if (!mxIsUint8(prhs) || mxIsComplex(prhs)) {
+					std::ostringstream sout;
+					sout << " argument " << arg_idx + 1 << " must be a matrix of uint8";
+					throw invalid_args_exception(sout.str());
+				}
+				
+				//?                assign_mat(arg_idx, arg , pointer_to_matrix((const
+				// uint8*)mxGetData(prhs), nc, nr));
+			} else if (std::is_same<type, int8_t>::value) {
+				if (!mxIsInt8(prhs) || mxIsComplex(prhs)) {
+					std::ostringstream sout;
+					sout << " argument " << arg_idx + 1 << " must be a matrix of int8";
+					throw invalid_args_exception(sout.str());
+				}
+				
+				//?                assign_mat(arg_idx, arg , pointer_to_matrix((const
+				// int8_t*)mxGetData(prhs), nc, nr));
+			} else if (std::is_same<type, int16_t>::value ||
+								 (std::is_same<type, short>::value && sizeof(short) == sizeof(int16_t))) {
+				if (!mxIsInt16(prhs) || mxIsComplex(prhs)) {
+					std::ostringstream sout;
+					sout << " argument " << arg_idx + 1 << " must be a matrix of int16";
+					throw invalid_args_exception(sout.str());
+				}
+				
+				//?                assign_mat(arg_idx, arg , pointer_to_matrix((const
+				// type*)mxGetData(prhs), nc, nr));
+			} else if (std::is_same<type, uint16_t>::value ||
+								 (std::is_same<type, unsigned short>::value && sizeof(unsigned short) == sizeof(uint16_t))) {
+				if (!mxIsUint16(prhs) || mxIsComplex(prhs)) {
+					std::ostringstream sout;
+					sout << " argument " << arg_idx + 1 << " must be a matrix of uint16";
+					throw invalid_args_exception(sout.str());
+				}
+				
+				//?                assign_mat(arg_idx, arg , pointer_to_matrix((const
+				// type*)mxGetData(prhs), nc, nr));
+			} else if (std::is_same<type, int32_t>::value ||
+								 (std::is_same<type, int>::value && sizeof(int) == sizeof(int32_t)) ||
+								 (std::is_same<type, long>::value && sizeof(long) == sizeof(int32_t))) {
+				if (!mxIsInt32(prhs) || mxIsComplex(prhs)) {
+					std::ostringstream sout;
+					sout << " argument " << arg_idx + 1 << " must be a matrix of int32";
+					throw invalid_args_exception(sout.str());
+				}
+				
+				//?                assign_mat(arg_idx, arg , pointer_to_matrix((const
+				// type*)mxGetData(prhs), nc, nr));
+			} else if (std::is_same<type, uint32_t>::value ||
+								 (std::is_same<type, unsigned int>::value && sizeof(unsigned int) == sizeof(uint32_t)) ||
+								 (std::is_same<type, unsigned long>::value && sizeof(unsigned long) == sizeof(uint32_t))) {
+				if (!mxIsUint32(prhs) || mxIsComplex(prhs)) {
+					std::ostringstream sout;
+					sout << " argument " << arg_idx + 1 << " must be a matrix of uint32";
+					throw invalid_args_exception(sout.str());
+				}
+				
+				//?                assign_mat(arg_idx, arg , pointer_to_matrix((const
+				// type*)mxGetData(prhs), nc, nr));
+			} else if (std::is_same<type, uint64_t>::value ||
+								 (std::is_same<type, unsigned int>::value && sizeof(unsigned int) == sizeof(uint64_t)) ||
+								 (std::is_same<type, unsigned long>::value && sizeof(unsigned long) == sizeof(uint64_t))) {
+				if (!mxIsUint64(prhs) || mxIsComplex(prhs)) {
+					std::ostringstream sout;
+					sout << " argument " << arg_idx + 1 << " must be a matrix of uint64";
+					throw invalid_args_exception(sout.str());
+				}
+				
+				//?                assign_mat(arg_idx, arg , pointer_to_matrix((const
+				// type*)mxGetData(prhs), nc, nr));
+			} else if (std::is_same<type, int64_t>::value ||
+								 (std::is_same<type, int>::value && sizeof(int) == sizeof(int64_t)) ||
+								 (std::is_same<type, long>::value && sizeof(long) == sizeof(int64_t))) {
+				if (!mxIsInt64(prhs) || mxIsComplex(prhs)) {
+					std::ostringstream sout;
+					sout << " argument " << arg_idx + 1 << " must be a matrix of int64";
+					throw invalid_args_exception(sout.str());
+				}
+				
+				//?                assign_mat(arg_idx, arg , pointer_to_matrix((const
+				// type*)mxGetData(prhs), nc, nr));
+			} else {
+				mexErrMsgIdAndTxt("mex_function:validate_and_populate_arg", "mex_function uses unsupported matrix type");
+			}
 		} else if (is_array_type<T>::value) {
 			assign_std_vector(arg_idx, arg, prhs);
 		} else if (std::is_same<T, function_handle>::value) {

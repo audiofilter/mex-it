@@ -27,6 +27,10 @@ namespace mex_binding
 		static_assert(std::is_same<helper,void>::value, "Need same types!");
 	};
 
+	template <typename T, typename helper = void> struct is_eigen_matrix : public default_is_kind_value      {
+	};
+
+
 	// ----------------------------------------------------------------------------------------
 	// Array2d or Array are obsolete / not supported
 	template <typename T>    struct is_array2d : public default_is_kind_value      {    };

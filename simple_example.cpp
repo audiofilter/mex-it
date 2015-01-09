@@ -6,7 +6,4 @@ void mex_function(const double &x, const double &y, const double &z, int& result
 	result = (x + y)*z;
 }
 
-using namespace mex_binding;
-using namespace std;
-
 #include "mex_wrap.cxx"

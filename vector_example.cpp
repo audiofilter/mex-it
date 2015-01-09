@@ -12,7 +12,4 @@ void mex_function(const std::vector<double>& x, const std::vector<double>& y, st
     }
 }
 
-using namespace mex_binding;
-using namespace std;
-
 #include "mex_wrap.cxx"
