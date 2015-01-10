@@ -41,3 +41,7 @@ void mex_function(const double &x, const double &y, const double &z, double& res
 For single file example, you can do this in matlab (for recent GCC/Clang)
 
 mex CXXFLAGS="\$CXXFLAGS -std=c++11" simple_example.cpp
+
+### Requirements
+Eigen needed for Eigen examples
+*	Assumes Eigen is in either /usr/local/include/eigen3 or /usr/include/eigen3, please edit FindEigen.cmake for other paths
