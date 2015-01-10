@@ -29,4 +29,6 @@
 
 *.mex
 test_mex
+test_eig
 build/
+Debug/

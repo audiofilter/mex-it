@@ -11,7 +11,8 @@ The methodology is based on that used in the dlib library
 However, the code was completely reworked to use as many classes from std C++11 as possible and to make use of variadic templates to greatly reduce the amount of code needed.
 * Currently code to callback matlab is not part of this library.
 
-This supports basic C++ data types. Soon support for Eigen Matrices may be added.
+This supports basic C++ data types. 
+Has limited support for Eigen Matrices (Matrix type of double + ColMajor)
 
 
 ####How do the compiler know the inputs and outputs?
@@ -32,7 +33,6 @@ Create a c++ implementation file like this
 void mex_function(const double &x, const double &y, const double &z, double& result) {
 	result = (x + y)*z;
 }
-#include "mex_stuff.h"
 #include "mex_wrap.cxx"
 ```
 
@@ -41,5 +41,3 @@ void mex_function(const double &x, const double &y, const double &z, double& res
 For single file example, you can do this in matlab (for recent GCC/Clang)
 
 mex CXXFLAGS="\$CXXFLAGS -std=c++11" simple_example.cpp
-
-(you may need to add libc++ to linking on Mac if you run into run-time issues)

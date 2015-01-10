@@ -6,6 +6,7 @@
 // License: Boost Software License   See LICENSE.txt for the full license.
 // Authors: Davis E. King (davis@dlib.net)
 
+#include "mex_stuff.h"
 #include "call_mex.h"
 
 namespace mex_binding {
@@ -14,7 +15,7 @@ namespace mex_binding {
 	template <typename funct> void call_mex_function(const funct &f, int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 		const long expected_nrhs = function_traits<funct>::get_number_of_inputs();
 		const long expected_nlhs = function_traits<funct>::get_number_of_outputs();
-		const long expected_args = expected_nrhs + expected_nlhs;
+		//const long expected_args = expected_nrhs + expected_nlhs;
 		
 		/* check for proper number of arguments */
 		if (nrhs > expected_nrhs || nrhs < expected_nrhs) {

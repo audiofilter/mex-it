@@ -39,7 +39,7 @@ endif(MATLAB_FOUND)
 
 include_directories(${MATLAB_INCLUDE_DIRS} ${OCTAVE_INCLUDE_DIRS} )
 
-set(MEXES simple_example vector_example)
+set(MEXES simple_example vector_example eigen_example)
 
 # This comes from FindMATLAB.cmake
 FOREACH(t ${MEXES})
@@ -48,8 +48,16 @@ FOREACH(t ${MEXES})
 		LINK_TO ${MATLAB_LIBRARIES})
 ENDFOREACH(t ${MEXES})
 
+
 add_executable(test_mex test_mex.cpp mex_function.cpp)
 target_link_libraries(test_mex ${MATLAB_LIBRARIES})
+
+set(TESTS test_eig_add test_eig_mult)
+
+FOREACH(t ${TESTS})
+	add_executable(${t} ${t}.cpp)
+	target_link_libraries(${t} ${MATLAB_LIBRARIES})
+ENDFOREACH()
 
 SET(LIBRARY_OUTPUT_PATH ..)
 SET(EXECUTABLE_OUTPUT_PATH ..)

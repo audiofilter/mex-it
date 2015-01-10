@@ -1,12 +1,10 @@
 #include "mex_function.h"
-#include "mex_stuff.h"
-
-using namespace mex_binding;
-using namespace std;
 
 #include "mex_wrap.cxx"
 
 #include <iostream>
+using namespace mex_binding;
+using namespace std;
 int main() {
 
 	int nrhs = 3;
