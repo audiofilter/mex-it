@@ -15,7 +15,7 @@ This supports basic C++ data types.
 Has limited support for Eigen Matrices (Matrix type of double + ColMajor)
 
 
-####How do the compiler know the inputs and outputs?
+####How does the compiler know the inputs and outputs?
 * Non-const references mean outputs
 * Everything else are inputs
 
@@ -40,8 +40,9 @@ void mex_function(const double &x, const double &y, const double &z, double& res
 
 For single file example, you can do this in matlab (for recent GCC/Clang)
 
+```sh
 mex CXXFLAGS="\$CXXFLAGS -std=c++11" simple_example.cpp
-
+```
 ### Requirements
 Eigen needed for Eigen examples
 *	Assumes Eigen is in either /usr/local/include/eigen3 or /usr/include/eigen3, please edit FindEigen.cmake for other paths
