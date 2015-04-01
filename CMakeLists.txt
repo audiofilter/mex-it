@@ -16,7 +16,6 @@ PROJECT(mex_functions)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11 -fPIC")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -DMX_COMPAT_32 -DMATLAB_MEX_FILE")
 
-set(MATLAB_MEX_EXTENSION "mex")
 find_package( MATLAB COMPONENTS MX_LIBRARY)
 if ( MATLAB_FOUND )
   message( STATUS "Found Matlab at dir:     ${MATLAB_ROOT_DIR}" )
@@ -48,7 +47,7 @@ if (EIGEN_FOUND)
 		target_link_libraries(${t} ${MATLAB_LIBRARIES})
 	ENDFOREACH()
 	
-	set(EIG_MEXES eigen_example)
+	set(EIG_MEXES eigen_add)
 
 	FOREACH(t ${EIG_MEXES})
 		add_matlab_mex(NAME ${t} SRC ${t}.cpp	LINK_TO ${MATLAB_LIBRARIES})
@@ -69,6 +68,9 @@ ENDFOREACH(t ${MEXES})
 
 add_executable(test_mex test_mex.cpp mex_function.cpp)
 target_link_libraries(test_mex ${MATLAB_LIBRARIES})
+
+add_executable(test_vector_add test_vector_add.cpp)
+target_link_libraries(test_vector_add ${MATLAB_LIBRARIES})
 
 
 SET(LIBRARY_OUTPUT_PATH ..)

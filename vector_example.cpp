@@ -7,8 +7,8 @@ void mex_function(const std::vector<double>& x, const std::vector<double>& y, st
         return;
     }
     for (int i=0;i<y.size();i++) {
-        sum.push_back( x[i] + y[i] );
-    }
+			sum.push_back( x[i] + y[i] );
+		}
 }
 
 #include "mex_wrap.cxx"

@@ -17,7 +17,7 @@
 #include "mex.h"
 #include <iostream>
 #include <sstream>
-
+#include <cassert>
 
 namespace mex_binding {
 
@@ -27,6 +27,7 @@ namespace mex_binding {
 		sout << "mex_function has some bug in it related to processing input argument " << arg_idx + 1;
 		mexErrMsgIdAndTxt("mex_function:validate_and_populate_arg", sout.str().c_str());
 	}
+
 
 #ifdef EIGEN_MAJOR_VERSION
 	template <typename T> struct is_eigen_matrix<Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic,Eigen::ColMajor> > {
@@ -53,6 +54,28 @@ namespace mex_binding {
 		memcpy(m.data(),(const T*)mxGetData(src),nr*nc*sizeof(double));
 	}
 #endif
+
+	template <typename T>	void populate_to_std_vector(const long arg_idx, T& m, const mxArray* src, long nc) {
+		// generic - should never happen since below specialization should be used for std::vector
+		std::ostringstream sout;
+		sout << "mex_function has some bug in it related to processing input argument " << arg_idx + 1;
+		mexErrMsgIdAndTxt("mex_function:validate_and_populate_arg", sout.str().c_str());
+	}
+
+	template <>	void populate_to_std_vector(const long arg_idx, std::vector<double>& m, 
+																					const mxArray* src, long nc) {
+		assert(nc > 0);
+		m.resize(nc);
+		memcpy(m.data(),mxGetPr(src),nc*sizeof(double));
+	}
+
+	template <typename T>
+	void populate_to_std_vector(const long arg_idx, std::vector<T>& m, 
+															const mxArray* src, long nc) {
+		assert(nc > 0);
+		m.resize(nc);
+		memcpy(m.data(),(const T*)mxGetData(src),nc*sizeof(T));
+	}
 	
 	// -------------------------------------------------------
 
@@ -192,11 +215,12 @@ namespace mex_binding {
 
 	template <typename T> typename enable_if_cond<is_array_type<T>>::type assign_to_matlab(mxArray *&plhs, const T &item) {
 		mwSize dims[1] = {static_cast<mwSize>(item.size())};
-		plhs = mxCreateCellArray(1, dims);
+		//std::cout << "In " << __FILE__ << " at line " << __LINE__ << " size = " << item.size() << "\n";
+		plhs = mxCreateDoubleMatrix(item.size(),1, mxREAL);
+		typedef double type;
+		type *mat = (type *)mxGetPr(plhs);
 		for (unsigned long i = 0; i < item.size(); ++i) {
-			mxArray *next = 0;
-			assign_to_matlab(next, item[i]);
-			mxSetCell(plhs, i, next);
+			*mat++ = item[i];
 		}
 	}
 
@@ -229,6 +253,10 @@ namespace mex_binding {
 	// ----------------------------------------------------------------------------------------
 
 	template <typename T> void validate_and_populate_arg(long arg_idx, const mxArray *prhs, T &arg) {
+
+		//mexPrintf("v & p arg_idx = %d\n",arg_idx);
+
+
 		if (std::is_arithmetic<T>::value || std::is_same<T, bool>::value) {
 			if (!(mxIsDouble(prhs) || mxIsSingle(prhs) || mxIsLogical(prhs)) || mxIsComplex(prhs) ||
 					mxGetNumberOfElements(prhs) != 1) {
@@ -340,7 +368,16 @@ namespace mex_binding {
 				mexErrMsgIdAndTxt("mex_function:validate_and_populate_arg", "mex_function uses unsupported matrix type");
 			}
 		} else if (is_array_type<T>::value) {
-			assign_std_vector(arg_idx, arg, prhs);
+			typedef typename inner_type<T>::type type;
+			const long nr = mxGetM(prhs);
+			const long nc = mxGetN(prhs);
+			if (nr != 1 || nc != 1) {
+				std::ostringstream sout;
+				sout << " argument " << arg_idx + 1 << " must be a 1-D matrix (got a " << nr << "*" << nc  << " matrix)";
+				throw invalid_args_exception(sout.str());
+			}
+			const long len = std::max(nr,nc);
+			populate_to_std_vector(arg_idx, arg, prhs, len);
 		} else if (std::is_same<T, function_handle>::value) {
 			if (!mxIsClass(prhs, "function_handle")) {
 				std::ostringstream sout;
@@ -380,6 +417,7 @@ namespace mex_binding {
 	template<typename funct, std::size_t I=0, std::size_t N, typename Ts> inline typename std::enable_if< (I<N), void>::type
 	validate_args(const mxArray *array[], int& arg_idx, Ts& arg) {
 		if (function_traits<funct>::template is_input<I>::value) {
+			//mexPrintf("calling v & p in loop arg_idx = %d\n",arg_idx);
 			validate_and_populate_arg(arg_idx, array[arg_idx], std::get<I>(arg));
 			arg_idx++;
 		}
@@ -400,41 +438,6 @@ namespace mex_binding {
 	};
 
 	// ----------------------------------------------------------------------------------------
-
-	template <typename T>
-	typename enable_if_cond<is_array_type<T>>::type assign_std_vector(const long arg_idx, T &dest, const mxArray *src) {
-		const long nr = mxGetM(src);
-		const long nc = mxGetN(src);
-		
-		typedef typename inner_type<T>::type type;
-
-		if (!mxIsCell(src)) {
-			std::ostringstream sout;
-			sout << " argument " << arg_idx + 1 << " must be a cell array";
-			throw invalid_args_exception(sout.str());
-		}
-		if (nr != 1 && nc != 1) {
-			std::ostringstream sout;
-			sout << " argument " << arg_idx + 1 << " must be a cell array with exactly "
-				"1 row or 1 column (i.e. a row or "
-				"column vector)";
-			throw invalid_args_exception(sout.str());
-		}
-		
-		const long size = nr * nc;
-		dest.resize(size);
-		
-		for (unsigned long i = 0; i < dest.size(); ++i) {
-			try {
-				validate_and_populate_arg((long)i, mxGetCell(src, i), dest[i]);
-			} catch (invalid_args_exception &e) {
-				std::ostringstream sout;
-				sout << "Error in argument " << arg_idx + 1 << ": element " << i + 1 << " of cell array not the expected type.\n";
-				sout << "\t" << e.msg;
-				throw invalid_args_exception(sout.str());
-			}
-		}
-	}
 
 	template <typename T> typename disable_if_cond<is_array_type<T>>::type assign_std_vector(const long arg_idx, T &, const mxArray *) {
 		std::ostringstream sout;
