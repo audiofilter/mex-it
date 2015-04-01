@@ -371,7 +371,7 @@ namespace mex_binding {
 			typedef typename inner_type<T>::type type;
 			const long nr = mxGetM(prhs);
 			const long nc = mxGetN(prhs);
-			if (nr != 1 || nc != 1) {
+			if (nr != 1 && nc != 1) {
 				std::ostringstream sout;
 				sout << " argument " << arg_idx + 1 << " must be a 1-D matrix (got a " << nr << "*" << nc  << " matrix)";
 				throw invalid_args_exception(sout.str());
