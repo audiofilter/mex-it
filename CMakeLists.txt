@@ -37,6 +37,9 @@ else( MATLAB_FOUND )
 endif(MATLAB_FOUND)
 
 
+# Add for tests to be more verbose
+#add_definitions(-DDEBUG)
+
 # Add tests for Eigen if found
 find_package(EIGEN)
 if (EIGEN_FOUND) 
@@ -66,6 +69,7 @@ FOREACH(t ${MEXES})
 ENDFOREACH(t ${MEXES})
 
 
+# Standalone example with external mex function
 add_executable(test_mex test_mex.cpp mex_function.cpp)
 target_link_libraries(test_mex ${MATLAB_LIBRARIES})
 

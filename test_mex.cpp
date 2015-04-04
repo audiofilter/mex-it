@@ -32,6 +32,10 @@ int main() {
 
 	double result = mxGetScalar(plhs[0]);
 
+	assert(result == 35);
+
+#ifdef DEBUG
 	cout << __FILE__ << " => mex_function: result of (" << x << " + " << y << ") * " << z << " is: " << result << endl;
+#endif
 
 }

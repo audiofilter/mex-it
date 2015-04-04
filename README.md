@@ -46,3 +46,21 @@ mex CXXFLAGS="\$CXXFLAGS -std=c++11" simple_example.cpp
 ### Requirements
 Eigen needed for Eigen examples
 *	Assumes Eigen is in either /usr/local/include/eigen3 or /usr/include/eigen3, please edit FindEigen.cmake for other paths
+
+### Other examples
+
+C++ files starting with test_ are examples that can't generate mex files but do test the interfaces in pure C++ using mex header
+files
+
+test_eig_add.cpp     -> Test of adding 2 Eigen double Matrices
+test_eig_mult.cpp    -> Test of multipling 2 Eigne double Matrices
+test_vector_add.cpp  -> Test of adding std::vector<double>
+
+test_mex.cpp -> Uses include of 'mex_function.h' to test the function in 'mex_function.cpp'
+
+Mex example
+
+eigen_add.cpp -> For creating mex function adds 2 eigen matriceso
+simple_example.cpp -> A very basic example that returns (x+y)*z for inputs x,y, and z
+vector_example.cpp -> An example that returns (x+y)*z for inputs x,y, and z
+eigen_example.cpp  -> Same example as in test_eig_add.cpp but here can generate a mex function
