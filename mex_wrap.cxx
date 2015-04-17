@@ -87,8 +87,8 @@ namespace mex_binding {
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 // Only remap cout if we aren't using octave since octave already does this.
 #if !defined(OCTAVE_IMPORT) && !defined(OCTAVE_API)
-    // make it so cout prints to mexPrintf()
-    static mex_binding::mex_streambuf sb;
+	// make it so cout prints to mexPrintf()
+	//static mex_binding::mex_streambuf sb;
 #endif
 
     mex_binding::call_mex_function(mex_function, nlhs, plhs, nrhs, prhs);
