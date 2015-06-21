@@ -70,11 +70,12 @@ namespace mex_binding {
 	}
 
 #ifdef EIGEN_MAJOR_VERSION
-	template <>	void populate_to_vector(const long arg_idx, Eigen::Matrix<double,Eigen::Dynamic,1>& m, 
-																					const mxArray* src, long nc) {
+	template <typename T>
+	void populate_to_vector(const long arg_idx, Eigen::Matrix<T,Eigen::Dynamic,1>& m, 
+													const mxArray* src, long nc) {
 		assert(nc > 0);
 		m.resize(nc);
-		memcpy(m.data(),mxGetPr(src),nc*sizeof(double));
+		memcpy(m.data(),(const T*)mxGetPr(src),nc*sizeof(double));
 	}
 #endif
 	
@@ -97,10 +98,6 @@ namespace mex_binding {
 				sout << "mex_function has some bug in it related to processing input argument " << arg_idx + 1 << " on line " << __LINE__ << "\n";
         mexErrMsgIdAndTxt("mex_function:validate_and_populate_arg", sout.str().c_str());
     }
-
-   	// Forward declarations
-   	template <typename T> typename enable_if_cond<is_array_type<T>>::type assign_std_vector(const long arg_idx, T &dest, const mxArray *src);
-  	template <typename T> typename disable_if_cond<is_array_type<T>>::type assign_std_vector(const long arg_idx, T &, const mxArray *);
 
     // ----------------------------------------------------------------------------------------
 
@@ -448,14 +445,6 @@ namespace mex_binding {
 
 	// ----------------------------------------------------------------------------------------
 
-	template <typename T> typename disable_if_cond<is_array_type<T>>::type assign_std_vector(const long arg_idx, T &, const mxArray *) {
-		std::ostringstream sout;
-		sout << "mex_function has some bug in it related to processing input argument " << arg_idx + 1 << " on line " << __LINE__ << "\n";
-		mexErrMsgIdAndTxt("mex_function:validate_and_populate_arg", sout.str().c_str());
-	}
-	
-	// ----------------------------------------------------------------------------------------
-	
 	template <typename T> struct call_mex_helper;
 
 	// This is where all of the variadic template magic happens
