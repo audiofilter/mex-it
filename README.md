@@ -12,7 +12,7 @@ However, the code was completely reworked to use as many classes from std C++11 
 * Currently code to callback matlab is not part of this library.
 
 This supports basic C++ data types. 
-Has limited support for Eigen Matrices (Matrix type of double + ColMajor)
+Has limited support for Eigen Matrices (Matrix type of double + ColMajor), plus Eigen Vectors (see examples)
 
 
 ####How does the compiler know the inputs and outputs?
@@ -60,7 +60,8 @@ test_mex.cpp -> Uses include of 'mex_function.h' to test the function in 'mex_fu
 
 Mex example
 
-eigen_add.cpp -> For creating mex function adds 2 eigen matriceso
+eigen_add.cpp -> For creating mex function adds 2 eigen matrices
 simple_example.cpp -> A very basic example that returns (x+y)*z for inputs x,y, and z
 vector_example.cpp -> An example that returns (x+y)*z for inputs x,y, and z
+eigen_vector_example.cpp  -> An example of a vector add for Eigen (double) vectors
 eigen_example.cpp  -> Same example as in test_eig_add.cpp but here can generate a mex function
