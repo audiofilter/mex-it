@@ -24,7 +24,7 @@ namespace mex_binding {
 	template <typename T>	void populate_to_eigen_mat(const long arg_idx, T& m, const mxArray* src, long nc, long nr) {
 		// generic - should never happen since below specialization should be used for Eigen::Matrix
 		std::ostringstream sout;
-		sout << "mex_function has some bug in it related to processing input argument " << arg_idx + 1;
+		sout << "mex_function has some bug in it related to processing input argument " << arg_idx + 1 << " on line " << __LINE__ << "\n";
 		mexErrMsgIdAndTxt("mex_function:validate_and_populate_arg", sout.str().c_str());
 	}
 
@@ -55,22 +55,31 @@ namespace mex_binding {
 	}
 #endif
 
-	template <typename T>	void populate_to_std_vector(const long arg_idx, T& m, const mxArray* src, long nc) {
+	template <typename T>	void populate_to_vector(const long arg_idx, T& m, const mxArray* src, long nc) {
 		// generic - should never happen since below specialization should be used for std::vector
 		std::ostringstream sout;
-		sout << "mex_function has some bug in it related to processing input argument " << arg_idx + 1;
+		sout << "mex_function has some bug in it related to processing input argument " << arg_idx + 1 << " on line " << __LINE__ << "\n";
 		mexErrMsgIdAndTxt("mex_function:validate_and_populate_arg", sout.str().c_str());
 	}
 
-	template <>	void populate_to_std_vector(const long arg_idx, std::vector<double>& m, 
+	template <>	void populate_to_vector(const long arg_idx, std::vector<double>& m, 
 																					const mxArray* src, long nc) {
 		assert(nc > 0);
 		m.resize(nc);
 		memcpy(m.data(),mxGetPr(src),nc*sizeof(double));
 	}
 
+#ifdef EIGEN_MAJOR_VERSION
+	template <>	void populate_to_vector(const long arg_idx, Eigen::Matrix<double,Eigen::Dynamic,1>& m, 
+																					const mxArray* src, long nc) {
+		assert(nc > 0);
+		m.resize(nc);
+		memcpy(m.data(),mxGetPr(src),nc*sizeof(double));
+	}
+#endif
+	
 	template <typename T>
-	void populate_to_std_vector(const long arg_idx, std::vector<T>& m, 
+	void populate_to_vector(const long arg_idx, std::vector<T>& m, 
 															const mxArray* src, long nc) {
 		assert(nc > 0);
 		m.resize(nc);
@@ -85,7 +94,7 @@ namespace mex_binding {
 
     template <typename T> void assign_function_handle(const long arg_idx, T &, const mxArray *) {
         std::ostringstream sout;
-        sout << "mex_function has some bug in it related to processing input argument " << arg_idx + 1;
+				sout << "mex_function has some bug in it related to processing input argument " << arg_idx + 1 << " on line " << __LINE__ << "\n";
         mexErrMsgIdAndTxt("mex_function:validate_and_populate_arg", sout.str().c_str());
     }
 
@@ -246,7 +255,7 @@ namespace mex_binding {
 	typename disable_if<std::is_arithmetic<T>::value || std::is_same<T, bool>::value>::type assign_scalar(
 																																																				const long arg_idx, T &, const U &) {
 		std::ostringstream sout;
-		sout << "mex_function has some bug in it related to processing input argument " << arg_idx + 1;
+		sout << "mex_function has some bug in it related to processing input argument " << arg_idx + 1 << " on line " << __LINE__ << "\n";
 		mexErrMsgIdAndTxt("mex_function:validate_and_populate_arg", sout.str().c_str());
 	}
 	
@@ -265,6 +274,17 @@ namespace mex_binding {
 				throw invalid_args_exception(sout.str());
 			}
 			assign_scalar(arg_idx, arg, mxGetScalar(prhs));
+		} else if (is_array_type<T>::value) {
+			typedef typename inner_type<T>::type type;
+			const long nr = mxGetM(prhs);
+			const long nc = mxGetN(prhs);
+			if (nr != 1 && nc != 1) {
+				std::ostringstream sout;
+				sout << " argument " << arg_idx + 1 << " must be a 1-D matrix (got a " << nr << "*" << nc  << " matrix)";
+				throw invalid_args_exception(sout.str());
+			}
+			const long len = std::max(nr,nc);
+			populate_to_vector(arg_idx, arg, prhs, len);
 		} else if (is_eigen_matrix<T>::value) {
 			typedef typename inner_type<T>::type type;
 			const int num_dims = mxGetNumberOfDimensions(prhs);
@@ -367,17 +387,6 @@ namespace mex_binding {
 			} else {
 				mexErrMsgIdAndTxt("mex_function:validate_and_populate_arg", "mex_function uses unsupported matrix type");
 			}
-		} else if (is_array_type<T>::value) {
-			typedef typename inner_type<T>::type type;
-			const long nr = mxGetM(prhs);
-			const long nc = mxGetN(prhs);
-			if (nr != 1 && nc != 1) {
-				std::ostringstream sout;
-				sout << " argument " << arg_idx + 1 << " must be a 1-D matrix (got a " << nr << "*" << nc  << " matrix)";
-				throw invalid_args_exception(sout.str());
-			}
-			const long len = std::max(nr,nc);
-			populate_to_std_vector(arg_idx, arg, prhs, len);
 		} else if (std::is_same<T, function_handle>::value) {
 			if (!mxIsClass(prhs, "function_handle")) {
 				std::ostringstream sout;
@@ -441,7 +450,7 @@ namespace mex_binding {
 
 	template <typename T> typename disable_if_cond<is_array_type<T>>::type assign_std_vector(const long arg_idx, T &, const mxArray *) {
 		std::ostringstream sout;
-		sout << "mex_function has some bug in it related to processing input argument " << arg_idx + 1;
+		sout << "mex_function has some bug in it related to processing input argument " << arg_idx + 1 << " on line " << __LINE__ << "\n";
 		mexErrMsgIdAndTxt("mex_function:validate_and_populate_arg", sout.str().c_str());
 	}
 	

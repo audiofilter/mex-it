@@ -59,7 +59,7 @@ endif(EIGEN_FOUND)
 
 include_directories(${MATLAB_INCLUDE_DIRS} ${OCTAVE_INCLUDE_DIRS} ${EIGEN_INCLUDE_DIR} )
 
-set(MEXES simple_example vector_example)
+set(MEXES simple_example vector_example eigen_vector_example)
 
 # This comes from FindMATLAB.cmake
 FOREACH(t ${MEXES})
