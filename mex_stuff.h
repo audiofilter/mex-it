@@ -21,6 +21,14 @@ namespace mex_binding
 	template <typename T> struct is_std_vector<const T&>{ const static bool value = is_std_vector<T>::value; };
 	template <typename T> struct is_std_vector<const T> { const static bool value = is_std_vector<T>::value; };
 
+	template <typename T> struct is_eigen_vector : public default_is_kind_value      {    };
+#ifdef EIGEN_MAJOR_VERSION
+	template <typename T> struct is_eigen_vector<Eigen::Matrix<T,Eigen::Dynamic,1> >  {
+		const static bool value = true; };
+	template <typename T> struct is_eigen_vector<T&>      { const static bool value = is_eigen_vector<T>::value; };
+	template <typename T> struct is_eigen_vector<const T&>{ const static bool value = is_eigen_vector<T>::value; };
+	template <typename T> struct is_eigen_vector<const T> { const static bool value = is_eigen_vector<T>::value; };
+#endif
 
 	// ----------------------------------------------------------------------------------------
 	template <typename T, typename helper = void> struct is_matrix : public default_is_kind_value      {
@@ -36,7 +44,11 @@ namespace mex_binding
 	template <typename T>    struct is_array2d : public default_is_kind_value      {    };
 	template <typename T>    struct is_array : public default_is_kind_value      {    };
 	// true if T is std::vector or array
-	template <typename T>    struct is_array_type {	const static bool value = is_std_vector<T>::value || is_array<T>::value;	};
+	template <typename T>    struct is_array_type {	const static bool value = is_std_vector<T>::value || is_array<T>::value
+#ifdef EIGEN_MAJOR_VERSION
+			|| is_eigen_vector<T>::value
+#endif
+			; };
 	template <typename T>    struct is_pair : public default_is_kind_value      {    };
 
 	// ----------------------------------------------------------------------------------------
