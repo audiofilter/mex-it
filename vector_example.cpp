@@ -11,4 +11,4 @@ void mex_function(const std::vector<double>& x, const std::vector<double>& y, st
 		}
 }
 
-#include "mex_wrap.cxx"
+#include "mex-it.h"

@@ -19,7 +19,7 @@ static void mex_function(const Matrixd &x, const Matrixd &y, Matrixd &out1, doub
 	std::cout << "In mex_function out2: = \n" << out2 << "\n";
 #endif
 }
-#include "mex_wrap.cxx"
+#include "mex-it.h"
 
 using namespace mex_binding;
 using namespace std;

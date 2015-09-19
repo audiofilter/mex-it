@@ -13,7 +13,7 @@ void mex_function(const Matrixd &x, const Matrixd &y, Matrixd &out1) {
 	std::cout << "In mex_function out1: = " << out1.rows() << "*" << out1.cols() << "\n" << out1 << "\n";
 #endif
 }
-#include "mex_wrap.cxx"
+#include "mex-it.h"
 
 #include <iostream>
 

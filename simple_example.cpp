@@ -1,8 +1,8 @@
 // We just need the mex_function header file
-// This could be put into mex_wrap.cxx but this way allows naming of the mex function in matlab to this file name (without the .cxx)
+// This could be put into mex-it.h but this way allows naming of the mex function in matlab to this file name (without the .cxx)
 
 void mex_function(const double &x, const double &y, const double &z, int& result) {
 	result = (x + y)*z;
 }
 
-#include "mex_wrap.cxx"
+#include "mex-it.h"

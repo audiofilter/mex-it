@@ -7,4 +7,4 @@ typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic,Eigen::ColMajor> Ma
 void mex_function(const Matrixd &x, const Matrixd &y, Matrixd &out1) {
 	out1 = x + y;
 }
-#include "mex_wrap.cxx"
+#include "mex-it.h"

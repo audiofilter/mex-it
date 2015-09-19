@@ -1,6 +1,6 @@
 #include "mex_function.h"
 
-#include "mex_wrap.cxx"
+#include "mex-it.h"
 
 #include <iostream>
 using namespace mex_binding;

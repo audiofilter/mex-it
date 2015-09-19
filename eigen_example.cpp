@@ -13,4 +13,4 @@ void mex_function(const Matrixd &x, const Matrixd &y, Matrixd &out1,
 	// we can also use cout to print things as usual:
 	std::cout << "some_number: " << some_number << std::endl;
 }
-#include "mex_wrap.cxx"
+#include "mex-it.h"

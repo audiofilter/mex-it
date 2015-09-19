@@ -26,7 +26,7 @@ void mex_function(const Vectord &x, const Vectord &y, Vectord &out1, double &out
 #endif
 }
 
-#include "mex_wrap.cxx"
+#include "mex-it.h"
 
 using namespace mex_binding;
 using namespace std;
