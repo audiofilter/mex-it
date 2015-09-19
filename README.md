@@ -2,6 +2,7 @@ mex-it
 ======
 
 C++ 11 code to automatically create Matlab mex function based on generic C++ functions
+Only a single header file "mex-it.h" is required to be included as in example below
 
 
 The methodology is based on that used in the dlib library 
@@ -33,7 +34,7 @@ Create a c++ implementation file like this
 void mex_function(const double &x, const double &y, const double &z, double& result) {
 	result = (x + y)*z;
 }
-#include "mex_wrap.cxx"
+#include "mex-it.h"
 ```
 
 ### Then build with CMake or using mex within Matlab
