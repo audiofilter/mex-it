@@ -514,7 +514,7 @@ namespace mex_binding {
 	}
 
 	template <typename T> typename enable_if_cond<is_array_type<T>>::type assign_to_matlab(mxArray *&plhs, const T &item) {
-		mwSize dims[1] = {static_cast<mwSize>(item.size())};
+		//mwSize dims[1] = {static_cast<mwSize>(item.size())};
 		//std::cout << "In " << __FILE__ << " at line " << __LINE__ << " size = " << item.size() << "\n";
 		plhs = mxCreateDoubleMatrix(item.size(),1, mxREAL);
 		typedef double type;
@@ -566,7 +566,6 @@ namespace mex_binding {
 			}
 			assign_scalar(arg_idx, arg, mxGetScalar(prhs));
 		} else if (is_array_type<T>::value) {
-			typedef typename inner_type<T>::type type;
 			const long nr = mxGetM(prhs);
 			const long nc = mxGetN(prhs);
 			if (nr != 1 && nc != 1) {
