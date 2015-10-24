@@ -2,7 +2,6 @@ dist: trusty
 language:  cpp
 compiler : gcc
 before_install:
-  - sudo apt-add-repository -y ppa:picaso/octave
   - sudo apt-get update -qq
 install:
   - sudo apt-get install -qq cmake
