@@ -10,7 +10,7 @@
 
 version: '{build}'
 
-platform: x64
+platform: x86
 
 configuration:
   - RelWithDebInfo
