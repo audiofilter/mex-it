@@ -10,14 +10,14 @@
 
 version: '{build}'
 
-platform: x86
+platform: Win32
 
 configuration:
-  - RelWithDebInfo
+  - Debug
 
 environment:
   global:
-    GENERATOR: Visual Studio 12 2013 Win32
+    GENERATOR: Visual Studio 12 2013
 
 # Operating system (build VM template)
 os: Windows Server 2012 R2
@@ -30,7 +30,7 @@ branches:
 
 before_build:
   - choco install octave
-  - set PATH=%PATH%;C:\Software\Octave-3.6.4\bin
+- set PATH=%PATH%;C:\Software\Octave-3.6.4\bin
 
 # configure and build
 build_script:
