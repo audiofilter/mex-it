@@ -1,19 +1,9 @@
-os:
-  - osx
 language: 
-  - objective-c
-compiler:
-  - clang
-env:
-  PATH=${PATH}:/usr/texbin
-before_install:
-  - brew update
-# Change this to your needs
-  - brew tap homebrew/science
-  - brew tap caskroom/cask
-  - brew install brew-cask
-  - brew install Caskroom/cask/mactex
-  - brew install octave
+  - cpp 
+install:
+  - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq cmake octave liboctave-dev
 before_script:
   - mkdir build
   - cd build
