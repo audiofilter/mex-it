@@ -13,6 +13,7 @@ install:
   - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 90
   - sudo apt-get install -qq octave
   - sudo apt-get install -qq liboctave-dev
+  - sudo apt-get install -qq libeigen3-dev
 before_script:
   - mkdir build
   - cd build
