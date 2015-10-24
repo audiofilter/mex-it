@@ -13,8 +13,7 @@ SET(CMAKE_BUILD_TYPE "DEBUG")
 
 PROJECT(mex_functions)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11 -fPIC")
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -DMX_COMPAT_32 -DMATLAB_MEX_FILE")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DMX_COMPAT_32 -DMATLAB_MEX_FILE")
 
 SET(OCTAVE_FIND_DEBUG True)
 
@@ -48,6 +47,8 @@ if (EIGEN_FOUND)
 	FOREACH(t ${TESTS})
 		add_executable(${t} ${t}.cpp)
 		target_link_libraries(${t} ${MATLAB_LIBRARIES})
+		set_property(TARGET ${t} PROPERTY POSITION_INDEPENDENT_CODE TRUE)
+		set_property(TARGET ${t} PROPERTY CXX_STANDARD 11)
 	ENDFOREACH()
 	
 	set(EIG_MEXES eigen_add eigen_vector_example)
@@ -79,10 +80,13 @@ ENDFOREACH(t ${MEXES})
 # Standalone example with external mex function
 add_executable(test_mex test_mex.cpp mex_function.cpp)
 target_link_libraries(test_mex ${MATLAB_LIBRARIES})
+set_property(TARGET test_mex PROPERTY POSITION_INDEPENDENT_CODE TRUE)
+set_property(TARGET test_mex PROPERTY CXX_STANDARD 11)
 
 add_executable(test_vector_add test_vector_add.cpp)
 target_link_libraries(test_vector_add ${MATLAB_LIBRARIES})
-
+set_property(TARGET test_vector_add PROPERTY POSITION_INDEPENDENT_CODE TRUE)
+set_property(TARGET test_vector_add PROPERTY CXX_STANDARD 11)
 
 SET(LIBRARY_OUTPUT_PATH ..)
 SET(EXECUTABLE_OUTPUT_PATH ..)

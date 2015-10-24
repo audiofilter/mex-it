@@ -177,6 +177,8 @@ macro ( octave_add_oct FUNCTIONNAME )
     PREFIX ""
     SUFFIX  ".${_OCT_EXTENSION}"
   )
+	set_property(TARGET ${FUNCTIONNAME} PROPERTY CXX_STANDARD 11)
+	
 endmacro ()
 
 

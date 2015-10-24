@@ -19,6 +19,7 @@
 #include <sstream>
 #include <cassert>
 #include <cstring> // for memcpy linux
+#include <cstdint> // for MSVC int8_t, etc
 
 #if defined(_MSC_VER)
 #define DLL_EXPORT_SYM __declspec(dllexport)
@@ -567,8 +568,8 @@ namespace mex_binding {
 			}
 			assign_scalar(arg_idx, arg, mxGetScalar(prhs));
 		} else if (is_array_type<T>::value) {
-			const long nr = mxGetM(prhs);
-			const long nc = mxGetN(prhs);
+			auto nr = mxGetM(prhs);
+			auto nc = mxGetN(prhs);
 			if (nr != 1 && nc != 1) {
 				std::ostringstream sout;
 				sout << " argument " << arg_idx + 1 << " must be a 1-D matrix (got a " << nr << "*" << nc  << " matrix)";
@@ -579,8 +580,8 @@ namespace mex_binding {
 		} else if (is_eigen_matrix<T>::value) {
 			typedef typename inner_type<T>::type type;
 			const int num_dims = mxGetNumberOfDimensions(prhs);
-			const long nr = mxGetM(prhs);
-			const long nc = mxGetN(prhs);
+			auto nr = mxGetM(prhs);
+			auto nc = mxGetN(prhs);
 
 			if (num_dims != 2) {
 				std::ostringstream sout;
@@ -696,9 +697,9 @@ namespace mex_binding {
 			sout << " argument " << arg_idx + 1 << " must be a char string";
 			throw invalid_args_exception(sout.str());
 		}
-		const long nr = mxGetM(prhs);
-		const long nc = mxGetN(prhs);
-		const long size = nr * nc;
+		auto nr = mxGetM(prhs);
+		auto nc = mxGetN(prhs);
+		auto size = nr * nc;
 		arg.resize(size + 1);
 		if (mxGetString(prhs, &arg[0], arg.size())) {
 			std::ostringstream sout;
