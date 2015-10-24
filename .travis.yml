@@ -1,15 +1,17 @@
-language: 
-  - cpp 
+language:  cpp
+compiler : gcc
 before install:
   - sudo add-apt-repository -y ppa:kalakris/cmake
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+  - sudo apt-get update -qq
   - sudo apt-add-repository -y ppa:picaso/octave
   - sudo apt-get update -qq
 install:
-  - sudo apt-get install -qq cmake octave
+  - sudo apt-get install -qq cmake
   - sudo apt-get install -qq gcc-4.8 g++-4.8
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
   - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 90
+  - sudo apt-get install -qq octave
   - sudo apt-get install -qq liboctave-dev
 before_script:
   - mkdir build
