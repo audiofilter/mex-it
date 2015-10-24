@@ -30,7 +30,7 @@ branches:
 
 before_build:
   - choco install octave
-- set PATH=%PATH%;C:\Software\Octave-3.6.4\bin
+  - set PATH=%PATH%;C:\Software\Octave-3.6.4\bin
 
 # configure and build
 build_script:
