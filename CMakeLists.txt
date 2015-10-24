@@ -77,16 +77,18 @@ FOREACH(t ${MEXES})
 ENDFOREACH(t ${MEXES})
 
 
-# Standalone example with external mex function
-add_executable(test_mex test_mex.cpp mex_function.cpp)
-target_link_libraries(test_mex ${MATLAB_LIBRARIES})
-set_property(TARGET test_mex PROPERTY POSITION_INDEPENDENT_CODE TRUE)
-set_property(TARGET test_mex PROPERTY CXX_STANDARD 11)
-
-add_executable(test_vector_add test_vector_add.cpp)
-target_link_libraries(test_vector_add ${MATLAB_LIBRARIES})
-set_property(TARGET test_vector_add PROPERTY POSITION_INDEPENDENT_CODE TRUE)
-set_property(TARGET test_vector_add PROPERTY CXX_STANDARD 11)
+# Standalone example with external mex function - Linux/Mac Only
+if (NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+	add_executable(test_mex test_mex.cpp mex_function.cpp)
+	target_link_libraries(test_mex ${MATLAB_LIBRARIES})
+	set_property(TARGET test_mex PROPERTY POSITION_INDEPENDENT_CODE TRUE)
+	set_property(TARGET test_mex PROPERTY CXX_STANDARD 11)
+	
+	add_executable(test_vector_add test_vector_add.cpp)
+	target_link_libraries(test_vector_add ${MATLAB_LIBRARIES})
+	set_property(TARGET test_vector_add PROPERTY POSITION_INDEPENDENT_CODE TRUE)
+	set_property(TARGET test_vector_add PROPERTY CXX_STANDARD 11)
+endif()
 
 SET(LIBRARY_OUTPUT_PATH ..)
 SET(EXECUTABLE_OUTPUT_PATH ..)
