@@ -17,7 +17,7 @@ configuration:
 
 environment:
   global:
-    GENERATOR: Visual Studio 12 Win32
+    GENERATOR: Visual Studio 12 2013 Win32
 
 # Operating system (build VM template)
 os: Windows Server 2012 R2
