@@ -6,7 +6,7 @@ void mex_function(const std::vector<double>& x, const std::vector<double>& y, st
         std::cout << "Need x size to be equal or larger to y size\n";
         return;
     }
-    for (int i=0;i<y.size();i++) {
+    for (size_t i=0;i<y.size();i++) {
 			sum.push_back( x[i] + y[i] );
 		}
 }
