@@ -26,7 +26,7 @@ Has limited support for Eigen Matrices (Matrix type of double + ColMajor), plus 
 * Either Cmake or setup your own mex script
 * Mac OS X with Clang 6
 - Linux : Travis  [![Build Status](https://travis-ci.org/audiofilter/mex-it.png)](https://travis-ci.org/audiofilter/mex-it)
-* Visual Studio 2013 : AppVeyor [![Build status](https://ci.appveyor.com/api/projects/status/4n3dshqn0oh24g0y?svg=true)](https://ci.appveyor.com/project/audiofilter/mex-it)
+* Visual Studio 2013 (32-bit for Octave use): AppVeyor [![Build status](https://ci.appveyor.com/api/projects/status/4n3dshqn0oh24g0y?svg=true)](https://ci.appveyor.com/project/audiofilter/mex-it)
 
 ### Example
 Create a c++ implementation file like this
