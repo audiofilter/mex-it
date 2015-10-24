@@ -16,6 +16,8 @@ PROJECT(mex_functions)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11 -fPIC")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -DMX_COMPAT_32 -DMATLAB_MEX_FILE")
 
+SET(OCTAVE_FIND_DEBUG True)
+
 find_package( MATLAB COMPONENTS MX_LIBRARY)
 if ( MATLAB_FOUND )
   message( STATUS "Found Matlab at dir:     ${MATLAB_ROOT_DIR}" )
@@ -43,6 +45,7 @@ endif(MATLAB_FOUND)
 # Add tests for Eigen if found
 find_package(EIGEN)
 if (EIGEN_FOUND) 
+	include_directories(${MATLAB_INCLUDE_DIRS} ${OCTAVE_INCLUDE_DIRS} ${EIGEN_INCLUDE_DIR} )
 	set(TESTS test_eig_add test_eig_mult)
 
 	FOREACH(t ${TESTS})
@@ -50,22 +53,21 @@ if (EIGEN_FOUND)
 		target_link_libraries(${t} ${MATLAB_LIBRARIES})
 	ENDFOREACH()
 	
-	set(EIG_MEXES eigen_add)
+	set(EIG_MEXES eigen_add eigen_vector_example)
 
 	FOREACH(t ${EIG_MEXES})
 		add_matlab_mex(NAME ${t} SRC ${t}.cpp	LINK_TO ${MATLAB_LIBRARIES})
 	ENDFOREACH(t ${EIG_MEXES})
+else()
+	include_directories(${MATLAB_INCLUDE_DIRS} ${OCTAVE_INCLUDE_DIRS} )
 endif(EIGEN_FOUND)
 
-include_directories(${MATLAB_INCLUDE_DIRS} ${OCTAVE_INCLUDE_DIRS} ${EIGEN_INCLUDE_DIR} )
 
-set(MEXES simple_example vector_example eigen_vector_example)
+set(MEXES simple_example vector_example)
 
 # This comes from FindMATLAB.cmake
 FOREACH(t ${MEXES})
-  add_matlab_mex(NAME ${t} 
-		SRC ${t}.cpp
-		LINK_TO ${MATLAB_LIBRARIES})
+  add_matlab_mex(NAME ${t} SRC ${t}.cpp	LINK_TO ${MATLAB_LIBRARIES})
 ENDFOREACH(t ${MEXES})
 
 
