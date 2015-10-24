@@ -30,10 +30,10 @@ branches:
 
 before_build:
   - choco install octave
-	
+
 # configure and build
 build_script:
   - mkdir build && cd build
-  - cmake ../ -G "%GENERATOR%" -DCMAKE_BUILD_TYPE=%CONFIGURATION% 
+  - cmake ../ -G "%GENERATOR%" -DCMAKE_BUILD_TYPE=%CONFIGURATION%
   - cmake --build . --config %CONFIGURATION%
 
