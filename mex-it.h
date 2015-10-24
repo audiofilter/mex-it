@@ -18,6 +18,7 @@
 #include <iostream>
 #include <sstream>
 #include <cassert>
+#include <cstring> // for memcpy linux
 
 #if defined(_MSC_VER)
 #define DLL_EXPORT_SYM __declspec(dllexport)
