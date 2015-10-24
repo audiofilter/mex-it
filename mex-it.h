@@ -540,7 +540,7 @@ namespace mex_binding {
 			sout << "Error, input argument " << arg_idx + 1 << " must be a non-negative number.";
 			mexErrMsgIdAndTxt("mex_function:validate_and_populate_arg", sout.str().c_str());
 		} else {
-			dest = src;
+			dest = (T)src;
 		}
 	}
 	
@@ -575,13 +575,13 @@ namespace mex_binding {
 				sout << " argument " << arg_idx + 1 << " must be a 1-D matrix (got a " << nr << "*" << nc  << " matrix)";
 				throw invalid_args_exception(sout.str());
 			}
-			const long len = std::max(nr,nc);
+			const long len = (long)std::max(nr,nc);
 			populate_to_vector(arg_idx, arg, prhs, len);
 		} else if (is_eigen_matrix<T>::value) {
 			typedef typename inner_type<T>::type type;
 			const int num_dims = mxGetNumberOfDimensions(prhs);
-			auto nr = mxGetM(prhs);
-			auto nc = mxGetN(prhs);
+			const long nr = (long)mxGetM(prhs);
+			const long nc = (long)mxGetN(prhs);
 
 			if (num_dims != 2) {
 				std::ostringstream sout;
@@ -701,7 +701,7 @@ namespace mex_binding {
 		auto nc = mxGetN(prhs);
 		auto size = nr * nc;
 		arg.resize(size + 1);
-		if (mxGetString(prhs, &arg[0], arg.size())) {
+		if (mxGetString(prhs, &arg[0], static_cast<mwSize>(arg.size()))) {
 			std::ostringstream sout;
 			sout << " argument " << arg_idx + 1 << " encountered an error while calling mxGetString()";
 			throw invalid_args_exception(sout.str());
