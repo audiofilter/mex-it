@@ -22,19 +22,103 @@ environment:
 # Operating system (build VM template)
 os: Windows Server 2012 R2
 
-# branches to build
+# clone directory
+clone_folder: c:\projects\mex-it
+
+# whitelisted branches to build
 branches:
-  # whitelist
   only:
-    - master
+  - master
+
+# global environment variables
+environment:
+  MEX_ROOT: c:\projects\mex-it
+  OCTAVE_HOME: c:\dev\octave-4.0.0
+  #TODO: https://savannah.gnu.org/bugs/?41699
+  # we use octave-cli.exe here instead of octave.exe because of a bug
+  # in the MinGW/MXE build causing Octave to crash on exit with a segfault
+  # after having used any GraphicsMagick functions (imread, etc..).
+  # Even then, we can't always trust Octave's exit code on Windows! It throws
+  # 0xC0000005 on exit (access violation), even when it runs just fine.
+  #TODO: The YAML parser report errors if we use % as first char in a command,
+  # so we cannot just write %OCTAVE%, we must use: call %OCTAVE%
+  OCTAVE: octave-cli --no-gui --no-window-system
+  # options in case of makefile (the quotes around the path are needed here!)
+  MAKE_OPTS: NO_CV_PKGCONFIG_HACK=1 TEST_CONTRIB=true WITH_OCTAVE=1 MATLABDIR='/c/dev/octave-4.0.0'
+
+# immediately finish build if one of the jobs fails
+matrix:
+  fast_finish: true
+
+# disable automatic building/testing/deploying phases, we use custom scripts
+build: off
+test: off
+deploy: off
+
+install:
+  # download and install dependencies
+  - if not exist "c:\dev" ( mkdir "c:\dev" )
+  - cd "c:\dev"
+  - echo Installing GNU Make ...
+  - ps: Start-FileDownload "ftp://ftp.equation.com/make/32/make.exe" -FileName mingw32-make.exe
+  - set "PATH=c:\dev;%PATH%"
+  - 7z x "c:\dev\build_mingw_x86.7z" -o"c:\dev\build" -y > nul
+  - echo Installing Octave ...
+  - ps: Start-FileDownload "https://ftp.gnu.org/gnu/octave/windows/octave-4.0.0_0.zip" -FileName octave-4.0.0_0.zip
+  - 7z x "c:\dev\octave-4.0.0_0.zip" -o"c:\dev" -y > nul
+  - copy /y "%OCTAVE_HOME%\bin\libopenblas.dll" "%OCTAVE_HOME%\bin\libblas.dll" > nul
+  - set "PATH=%OCTAVE_HOME%\bin;%PATH%"
+  - dir "c:\dev"
+  # show info about build tools
+  - set
+  - ver
+  - systeminfo
+  - cmake --version
+  - mingw32-make --version
+  - g++ --version
+  - call %OCTAVE% --version
+  - call %OCTAVE% --eval "pkg list"
 
 before_build:
-  - choco install octave
-  - set PATH=%PATH%;C:\Software\Octave-3.6.4\bin
+  # create .octaverc file (where we setup path and load required packages on start)
+  #TODO: due to bug in Octave, we must also add private directories on path
+  - ps: |
+      $OctaveRC = @"
+        crash_dumps_octave_core(false);
+        more off
+        cd(getenv('MEX_ROOT'))
+        addpath(getenv('MEX_ROOT'))
+      "@
+      # one for SHELL=sh.exe and one for SHELL=cmd.exe
+      $HomeDirs = @(
+        (Join-Path (Join-Path $env:OCTAVE_HOME 'home') $env:USERNAME),
+        $env:USERPROFILE
+      )
+      $HomeDirs | ForEach-Object {
+        $OctaveRCFile = (Join-Path $_ '.octaverc')
+        New-Item -ItemType File -Path "$OctaveRCFile" -Force | Out-Null
+        $OctaveRC | Out-File -FilePath "$OctaveRCFile" -Encoding ASCII
+      }
+      cat "$OctaveRCFile"
 
-# configure and build
 build_script:
-  - mkdir build && cd build
-  - cmake ../ -G "%GENERATOR%" -DCMAKE_BUILD_TYPE=%CONFIGURATION%
-  - cmake --build . --config %CONFIGURATION%
+  # compile mex-it
+  - cd "%MEX_ROOT%"
+  - if "%WITH_MAKE%" == "yes" (
+      sh --login -c "cd \"$MEX_ROOT\" && mingw32-make $MAKE_OPTS $MAKE_EXTRA all"
+    ) else (
+      %OCTAVE% --eval "disp('test');"
+    )
 
+before_test:
+  # print cv build info
+  - call %OCTAVE% --eval "path, disp('test')"
+
+test_script:
+  # run test suite
+  #TODO: we reset %ERRORLEVEL% because we can't rely on Octave exit code
+  - if "%WITH_MAKE%" == "yes" (
+      sh --login -c "cd \"$MEX_ROOT\" && mingw32-make $MAKE_OPTS test"
+    ) else (
+      %OCTAVE% --eval "cd test;try,UnitTest(true);catch e,disp(e);exit(1);end;exit(0);" || ver > nul
+    )
