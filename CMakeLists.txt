@@ -65,7 +65,7 @@ else()
 endif(EIGEN_FOUND)
 
 
-set(MEXES simple_example vector_example)
+set(MEXES simple_example vector_example types_example)
 
 # This comes from FindMATLAB.cmake
 FOREACH(t ${MEXES})

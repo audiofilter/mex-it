@@ -14,3 +14,5 @@ tests:
 	octave -q test_vector_example.m
 	octave -q test_eigen_vector_example.m
 	octave -q test_eigen_matrix_example.m
+	octave -q test_types.m
+
