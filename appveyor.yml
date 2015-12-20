@@ -114,7 +114,7 @@ test_script:
   # run test suite
   #TODO: we reset %ERRORLEVEL% because we can't rely on Octave exit code
   - if "%WITH_MAKE%" == "yes" (
-      sh --login -c "cd \"$MEX_ROOT\" && mingw32-make $MAKE_OPTS test"
+      sh --login -c "cd \"$MEX_ROOT\" && mingw32-make $MAKE_OPTS test_vector_example"
     ) else (
       %OCTAVE% --eval "test_vector_example;exit(0);" || ver > nul
     )
