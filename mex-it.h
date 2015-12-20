@@ -168,7 +168,9 @@ namespace mex_binding {
 	template <typename T> struct is_eigen_vector : public default_is_kind_value      {    };
 #ifdef EIGEN_MAJOR_VERSION
 	template <typename T> struct is_eigen_vector<Eigen::Matrix<T,Eigen::Dynamic,1> >  {
-		const static bool value = true; };
+    typedef T type;
+		const static bool value = true;
+  };
 	template <typename T> struct is_eigen_vector<T&>      { const static bool value = is_eigen_vector<T>::value; };
 	template <typename T> struct is_eigen_vector<const T&>{ const static bool value = is_eigen_vector<T>::value; };
 	template <typename T> struct is_eigen_vector<const T> { const static bool value = is_eigen_vector<T>::value; };
@@ -326,11 +328,15 @@ namespace mex_binding {
 
 
 #ifdef EIGEN_MAJOR_VERSION
+	template <typename T> struct inner_type<T, typename enable_if_cond<is_eigen_vector<T>>::type> {
+		typedef typename is_eigen_vector<T>::type type;
+	};
+
 	template <typename T> struct is_eigen_matrix<Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic,Eigen::ColMajor> > {
 		typedef T type;
 		static const bool value = true;
 	};
-	
+  
 	template <typename T>	struct inner_type<T,typename std::enable_if<is_eigen_matrix<T>::value>::type> {
 		typedef typename is_eigen_matrix<T>::type type;
 	};
@@ -570,12 +576,94 @@ namespace mex_binding {
 		} else if (is_array_type<T>::value) {
 			auto nr = mxGetM(prhs);
 			auto nc = mxGetN(prhs);
+			typedef typename inner_type<T>::type type;
 			if (nr != 1 && nc != 1) {
 				std::ostringstream sout;
 				sout << " argument " << arg_idx + 1 << " must be a 1-D matrix (got a " << nr << "*" << nc  << " matrix)";
 				throw invalid_args_exception(sout.str());
 			}
 			const long len = (long)std::max(nr,nc);
+			if (std::is_same<type, double>::value) {
+				if (!mxIsDouble(prhs) || mxIsComplex(prhs)) {
+					std::ostringstream sout;
+					sout << " argument " << arg_idx + 1 << " must be a vector of doubles";
+					throw invalid_args_exception(sout.str());
+				}
+			} else if (std::is_same<type, float>::value) {
+				if (!mxIsSingle(prhs) || mxIsComplex(prhs)) {
+					std::ostringstream sout;
+					sout << " argument " << arg_idx + 1 << " must be a vector of single/float";
+					throw invalid_args_exception(sout.str());
+				}
+			} else if (std::is_same<type, bool>::value) {
+				if (!mxIsLogical(prhs)) {
+					std::ostringstream sout;
+					sout << " argument " << arg_idx + 1 << " must be a vector of logical elements.";
+					throw invalid_args_exception(sout.str());
+				}
+			} else if (std::is_same<type, uint8_t>::value) {
+				if (!mxIsUint8(prhs) || mxIsComplex(prhs)) {
+					std::ostringstream sout;
+					sout << " argument " << arg_idx + 1 << " must be a vector of uint8";
+					throw invalid_args_exception(sout.str());
+				}
+			} else if (std::is_same<type, int8_t>::value) {
+				if (!mxIsInt8(prhs) || mxIsComplex(prhs)) {
+					std::ostringstream sout;
+					sout << " argument " << arg_idx + 1 << " must be a vector of int8";
+					throw invalid_args_exception(sout.str());
+				}
+			} else if (std::is_same<type, int16_t>::value ||
+								 (std::is_same<type, short>::value && sizeof(short) == sizeof(int16_t))) {
+				if (!mxIsInt16(prhs) || mxIsComplex(prhs)) {
+					std::ostringstream sout;
+					sout << " argument " << arg_idx + 1 << " must be a vector of int16";
+					throw invalid_args_exception(sout.str());
+				}
+			} else if (std::is_same<type, uint16_t>::value ||
+								 (std::is_same<type, unsigned short>::value && sizeof(unsigned short) == sizeof(uint16_t))) {
+				if (!mxIsUint16(prhs) || mxIsComplex(prhs)) {
+					std::ostringstream sout;
+					sout << " argument " << arg_idx + 1 << " must be a vector of uint16";
+					throw invalid_args_exception(sout.str());
+				}
+			} else if (std::is_same<type, int32_t>::value ||
+								 (std::is_same<type, int>::value && sizeof(int) == sizeof(int32_t)) ||
+								 (std::is_same<type, long>::value && sizeof(long) == sizeof(int32_t))) {
+				if (!mxIsInt32(prhs) || mxIsComplex(prhs)) {
+					std::ostringstream sout;
+					sout << " argument " << arg_idx + 1 << " must be a vector of int32";
+					throw invalid_args_exception(sout.str());
+				}
+			} else if (std::is_same<type, uint32_t>::value ||
+								 (std::is_same<type, unsigned int>::value && sizeof(unsigned int) == sizeof(uint32_t)) ||
+								 (std::is_same<type, unsigned long>::value && sizeof(unsigned long) == sizeof(uint32_t))) {
+				if (!mxIsUint32(prhs) || mxIsComplex(prhs)) {
+					std::ostringstream sout;
+					sout << " argument " << arg_idx + 1 << " must be a vector of uint32";
+					throw invalid_args_exception(sout.str());
+				}
+			} else if (std::is_same<type, uint64_t>::value ||
+								 (std::is_same<type, unsigned int>::value && sizeof(unsigned int) == sizeof(uint64_t)) ||
+								 (std::is_same<type, unsigned long>::value && sizeof(unsigned long) == sizeof(uint64_t))) {
+				if (!mxIsUint64(prhs) || mxIsComplex(prhs)) {
+					std::ostringstream sout;
+					sout << " argument " << arg_idx + 1 << " must be a vector of uint64";
+					throw invalid_args_exception(sout.str());
+				}
+			} else if (std::is_same<type, int64_t>::value ||
+								 (std::is_same<type, int>::value && sizeof(int) == sizeof(int64_t)) ||
+								 (std::is_same<type, long>::value && sizeof(long) == sizeof(int64_t))) {
+				if (!mxIsInt64(prhs) || mxIsComplex(prhs)) {
+					std::ostringstream sout;
+					sout << " argument " << arg_idx + 1 << " must be a vector of int64";
+					throw invalid_args_exception(sout.str());
+				}
+      } else {
+        std::ostringstream sout;
+        sout << " argument " << arg_idx + 1 << " must be a vector of a pod type";
+        throw invalid_args_exception(sout.str());
+      }
 			populate_to_vector(arg_idx, arg, prhs, len);
 		} else if (is_eigen_matrix<T>::value) {
 			typedef typename inner_type<T>::type type;
