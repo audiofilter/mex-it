@@ -65,11 +65,13 @@ install:
   - copy /y "%OCTAVE_HOME%\bin\libopenblas.dll" "%OCTAVE_HOME%\bin\libblas.dll" > nul
   - set "PATH=%OCTAVE_HOME%\bin;%PATH%"
   - ps: Start-FileDownload "http://bitbucket.org/eigen/eigen/get/3.3-beta1.zip" -Filename eigen.zip
-  - 7z x "c:\dev\eigen.zip" -o"c:\dev" -y > nul
-  - mv eigen-eigen-ce5a455b34c0 eigen
   - dir "c:\dev"
+  - 7z x "c:\dev\eigen.zip" -o"%MEX_ROOT%" -y > nul
+  - cd "%MEX_ROOT%"
+  - mv eigen-eigen-ce5a455b34c0 eigen3
+  - dir "%MEX_ROOT%"
 # show info about build tools
-  - set
+  #- set
   - ver
   - systeminfo
   - cmake --version
