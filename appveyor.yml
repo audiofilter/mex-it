@@ -28,9 +28,6 @@ branches:
 
 # global environment variables
 environment:
-  global:
-    GENERATOR: Visual Studio 12 2013
-
   MEX_ROOT: c:\projects\mex-it
   OCTAVE_HOME: c:\dev\octave-4.0.0
   WITH_MAKE: yes
