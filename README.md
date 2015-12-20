@@ -3,7 +3,7 @@ mex-it
 
 C++ 11 code to automatically create Matlab mex function based on generic C++ functions.
 
-###Only a single header file "mex-it.h" is required to be included as in example below
+###Only a single header file "mex-it.h" is required
 
 
 The methodology is based on that used in the dlib library 
@@ -21,14 +21,13 @@ Has limited support for Eigen Matrices (Matrix type of double + ColMajor), plus 
 * Non-const references mean outputs
 * Everything else are inputs
 
-### Build status 
+### Building
+* Use either Cmake or setup your own mex script
+* Works on Mac OS X, Linux & Windows (mingw32/g++ or Visual Studio 2013)
 
-* Either Cmake or setup your own mex script
-* Mac OS X with Clang 6
+### Build status 
 * Linux : Travis  [![Build Status](https://travis-ci.org/audiofilter/mex-it.png)](https://travis-ci.org/audiofilter/mex-it)
 * Windows/mingw32/g++/Octave 4.0 : AppVeyor [![Build status](https://ci.appveyor.com/api/projects/status/4n3dshqn0oh24g0y?svg=true)](https://ci.appveyor.com/project/audiofilter/mex-it)
-
-* Also tested on Visual Studio 2013 (32-bit for Octave use): 
 
 ### Example
 Create a c++ implementation file like this
@@ -39,6 +38,15 @@ void mex_function(const double &x, const double &y, const double &z, double& res
 }
 #include "mex-it.h"
 ```
+
+Matlab driver for this
+```
+x = 3;
+y = 4;
+z = 5;
+result = simple_example(x,y,z);
+```
+
 
 ### Then build with CMake or using mex within Matlab
 
