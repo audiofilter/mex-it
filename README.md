@@ -54,16 +54,21 @@ Eigen needed for Eigen examples
 C++ files starting with test_ are examples that can't generate mex files but do test the interfaces in pure C++ using mex header
 files
 
-test_eig_add.cpp     -> Test of adding 2 Eigen double Matrices
-test_eig_mult.cpp    -> Test of multipling 2 Eigne double Matrices
-test_vector_add.cpp  -> Test of adding std::vector<double>
-
-test_mex.cpp -> Uses include of 'mex_function.h' to test the function in 'mex_function.cpp'
+* test_eig_add.cpp     -> Test of adding 2 Eigen Matrices of type 'double'
+* test_eig_mult.cpp    -> Test of multipling 2 Eigen Matrices of type 'double'
+* test_vector_add.cpp  -> Test of adding std::vector<double>
+* test_mex.cpp -> Uses include of 'mex_function.h' to test the function in 'mex_function.cpp'
 
 Mex example
 
-eigen_add.cpp -> For creating mex function adds 2 eigen matrices
-simple_example.cpp -> A very basic example that returns (x+y)*z for inputs x,y, and z
-vector_example.cpp -> An example that returns (x+y)*z for inputs x,y, and z
-eigen_vector_example.cpp  -> An example of a vector add for Eigen (double) vectors
-eigen_example.cpp  -> Same example as in test_eig_add.cpp but here can generate a mex function
+* eigen_add.cpp -> For creating mex function adds 2 eigen matrices
+* simple_example.cpp -> A very basic example that returns (x+y)*z for inputs x,y, and z
+* vector_example.cpp -> An example that returns (x+y)*z for inputs x,y, and z
+* eigen_vector_example.cpp  -> An example of a vector add for Eigen (double) vectors
+* eigen_example.cpp  -> Same example as in test_eig_add.cpp but here can generate a mex function
+
+
+Matlab/Octave Scripts to test
+* test_eigen_vector_example.m    -> Test of adding 2 Eigen Vectors of type 'double' - also checks if wrong type is used
+* test_eigen_add.m               -> Test of adding 2 Eigen Matrices of type 'double' - also checks if wrong type is used
+* test_vector_example.m          -> Test of adding 2 std::vector<double> - also checks if wrong type is used
