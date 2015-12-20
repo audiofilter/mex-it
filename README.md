@@ -57,7 +57,7 @@ mex CXXFLAGS="\$CXXFLAGS -std=c++11" simple_example.cpp
 ```
 ### Requirements
 Eigen needed for Eigen examples
-*	Assumes Eigen is in either /usr/local/include/eigen3 or /usr/include/eigen3, please edit FindEigen.cmake for other paths
+*	Assumes Eigen is in either /usr/local/include/eigen3 or /usr/include/eigen3 or eigen3, please edit FindEigen.cmake for other paths
 
 ### Other examples
 
