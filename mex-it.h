@@ -559,6 +559,45 @@ namespace mex_binding {
 		mexErrMsgIdAndTxt("mex_function:validate_and_populate_arg", sout.str().c_str());
 	}
 
+
+	template <typename T> void validate_scalar_type(long arg_idx, const mxArray *prhs) {
+    std::ostringstream sout;
+    if (std::is_same<T, uint8_t>::value && (mxGetClassID(prhs) != mxUINT8_CLASS)) {
+      sout << " argument " << arg_idx + 1 << " types don't match!, input is " << mxGetClassName(prhs) << " expected type uint8_t\n";
+      throw invalid_args_exception(sout.str());
+    } else if (std::is_same<T, uint16_t>::value && (mxGetClassID(prhs) != mxUINT16_CLASS)) {
+      sout << " argument " << arg_idx + 1 << " types don't match!, input is " << mxGetClassName(prhs) << " expected type uint16_t\n";
+      throw invalid_args_exception(sout.str());
+    } else if (std::is_same<T, uint32_t>::value && (mxGetClassID(prhs) != mxUINT32_CLASS)) {
+      sout << " argument " << arg_idx + 1 << " types don't match!, input is " << mxGetClassName(prhs) << " expected type uint32_t\n";
+      throw invalid_args_exception(sout.str());
+    } else if (std::is_same<T, uint64_t>::value && (mxGetClassID(prhs) != mxUINT64_CLASS)) {
+      sout << " argument " << arg_idx + 1 << " types don't match!, input is " << mxGetClassName(prhs) << " expected type uint64_t\n";
+      throw invalid_args_exception(sout.str());
+    } else if (std::is_same<T, int8_t>::value && (mxGetClassID(prhs) != mxINT8_CLASS)) {
+      sout << " argument " << arg_idx + 1 << " types don't match!, input is " << mxGetClassName(prhs) << " expected type int8_t\n";
+      throw invalid_args_exception(sout.str());
+    } else if (std::is_same<T, int16_t>::value && (mxGetClassID(prhs) != mxINT16_CLASS)) {
+      sout << " argument " << arg_idx + 1 << " types don't match!, input is " << mxGetClassName(prhs) << " expected type int16_t\n";
+      throw invalid_args_exception(sout.str());
+    } else if (std::is_same<T, int32_t>::value && (mxGetClassID(prhs) != mxINT32_CLASS)) {
+      sout << " argument " << arg_idx + 1 << " types don't match!, input is " << mxGetClassName(prhs) << " expected type int32_t\n";
+      throw invalid_args_exception(sout.str());
+    } else if (std::is_same<T, int64_t>::value && (mxGetClassID(prhs) != mxINT64_CLASS)) {
+      sout << " argument " << arg_idx + 1 << " types don't match!, input is " << mxGetClassName(prhs) << " expected type int64_t\n";
+      throw invalid_args_exception(sout.str());
+    } else if (std::is_same<T, double>::value && (!mxIsDouble(prhs))) {
+      sout << " argument " << arg_idx + 1 << " types don't match!, input is " << mxGetClassName(prhs) << " expected type double\n";
+      throw invalid_args_exception(sout.str());
+    } else if (std::is_same<T, float>::value && (!mxIsSingle(prhs))) {
+      sout << " argument " << arg_idx + 1 << " types don't match!, input is " << mxGetClassName(prhs) << " expected type float\n";
+      throw invalid_args_exception(sout.str());
+    } else if (std::is_same<T, bool>::value && (!mxIsLogical(prhs))) {
+      sout << " argument " << arg_idx + 1 << " types don't match!, input is " << mxGetClassName(prhs) << " expected type bool\n";
+      throw invalid_args_exception(sout.str());
+    }
+  }
+ 
 	// ----------------------------------------------------------------------------------------
 
 	template <typename T> void validate_and_populate_arg(long arg_idx, const mxArray *prhs, T &arg) {
@@ -578,40 +617,7 @@ namespace mex_binding {
 				sout << " argument " << arg_idx + 1 << " must be a scalar, type is " << mxGetClassName(prhs) << "\n";
 				throw invalid_args_exception(sout.str());
 			}
-      if (std::is_same<T, uint8_t>::value && (mxGetClassID(prhs) != mxUINT8_CLASS)) {
-				sout << " argument " << arg_idx + 1 << " types don't match!, input is " << mxGetClassName(prhs) << " expected uint8_t\n";
-				throw invalid_args_exception(sout.str());
-      } else if (std::is_same<T, uint16_t>::value && (mxGetClassID(prhs) != mxUINT16_CLASS)) {
-				sout << " argument " << arg_idx + 1 << " types don't match!, input is " << mxGetClassName(prhs) << " expected uint16_t\n";
-				throw invalid_args_exception(sout.str());
-      } else if (std::is_same<T, uint32_t>::value && (mxGetClassID(prhs) != mxUINT32_CLASS)) {
-				sout << " argument " << arg_idx + 1 << " types don't match!, input is " << mxGetClassName(prhs) << " expected uint32_t\n";
-				throw invalid_args_exception(sout.str());
-      } else if (std::is_same<T, uint64_t>::value && (mxGetClassID(prhs) != mxUINT64_CLASS)) {
-				sout << " argument " << arg_idx + 1 << " types don't match!, input is " << mxGetClassName(prhs) << " expected uint64_t\n";
-				throw invalid_args_exception(sout.str());
-      } else if (std::is_same<T, int8_t>::value && (mxGetClassID(prhs) != mxINT8_CLASS)) {
-				sout << " argument " << arg_idx + 1 << " types don't match!, input is " << mxGetClassName(prhs) << " expected uint8_t\n";
-				throw invalid_args_exception(sout.str());
-      } else if (std::is_same<T, int16_t>::value && (mxGetClassID(prhs) != mxINT16_CLASS)) {
-				sout << " argument " << arg_idx + 1 << " types don't match!, input is " << mxGetClassName(prhs) << " expected uint16_t\n";
-				throw invalid_args_exception(sout.str());
-      } else if (std::is_same<T, int32_t>::value && (mxGetClassID(prhs) != mxINT32_CLASS)) {
-				sout << " argument " << arg_idx + 1 << " types don't match!, input is " << mxGetClassName(prhs) << " expected uint32_t\n";
-				throw invalid_args_exception(sout.str());
-      } else if (std::is_same<T, int64_t>::value && (mxGetClassID(prhs) != mxINT64_CLASS)) {
-				sout << " argument " << arg_idx + 1 << " types don't match!, input is " << mxGetClassName(prhs) << " expected uint64_t\n";
-				throw invalid_args_exception(sout.str());
-      } else if (std::is_same<T, double>::value && (!mxIsDouble(prhs))) {
-				sout << " argument " << arg_idx + 1 << " types don't match!, input is " << mxGetClassName(prhs) << " expected double\n";
-				throw invalid_args_exception(sout.str());
-      } else if (std::is_same<T, float>::value && (!mxIsSingle(prhs))) {
-				sout << " argument " << arg_idx + 1 << " types don't match!, input is " << mxGetClassName(prhs) << " expected float\n";
-				throw invalid_args_exception(sout.str());
-      } else if (std::is_same<T, bool>::value && (!mxIsLogical(prhs))) {
-				sout << " argument " << arg_idx + 1 << " types don't match!, input is " << mxGetClassName(prhs) << " expected bool\n";
-				throw invalid_args_exception(sout.str());
-      }
+      validate_scalar_type<T>(arg_idx, prhs);
       // will cast to (T) type
 			assign_scalar(arg_idx, arg, mxGetScalar(prhs));
 		} else if (is_array_type<T>::value) {
