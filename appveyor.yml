@@ -33,6 +33,7 @@ environment:
 
   MEX_ROOT: c:\projects\mex-it
   OCTAVE_HOME: c:\dev\octave-4.0.0
+  WITH_MAKE: yes
   #TODO: https://savannah.gnu.org/bugs/?41699
   # we use octave-cli.exe here instead of octave.exe because of a bug
   # in the MinGW/MXE build causing Octave to crash on exit with a segfault
@@ -118,5 +119,5 @@ test_script:
   - if "%WITH_MAKE%" == "yes" (
       sh --login -c "cd \"$MEX_ROOT\" && mingw32-make $MAKE_OPTS test"
     ) else (
-      %OCTAVE% --eval "cd test;try,UnitTest(true);catch e,disp(e);exit(1);end;exit(0);" || ver > nul
+      %OCTAVE% --eval "test_vector_example;exit(0);" || ver > nul
     )
