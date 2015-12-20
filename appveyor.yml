@@ -64,9 +64,9 @@ install:
   - 7z x "c:\dev\octave-4.0.0_0.zip" -o"c:\dev" -y > nul
   - copy /y "%OCTAVE_HOME%\bin\libopenblas.dll" "%OCTAVE_HOME%\bin\libblas.dll" > nul
   - set "PATH=%OCTAVE_HOME%\bin;%PATH%"
-  - dir "c:\dev"
   - ps: Start-FileDownload "http://bitbucket.org/eigen/eigen/get/3.3-beta1.zip" -Filename eigen.zip
   - 7z x "c:\dev\eigen.zip" -o"c:\dev" -y > nul
+  - dir "c:\dev"
 # show info about build tools
   - set
   - ver
