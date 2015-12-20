@@ -65,7 +65,9 @@ install:
   - copy /y "%OCTAVE_HOME%\bin\libopenblas.dll" "%OCTAVE_HOME%\bin\libblas.dll" > nul
   - set "PATH=%OCTAVE_HOME%\bin;%PATH%"
   - dir "c:\dev"
-  # show info about build tools
+  - ps: Start-FileDownload "http://bitbucket.org/eigen/eigen/get/3.3-beta1.zip" -Filename eigen.zip
+  - 7z x "c:\dev\eigen.zip" -o"c:\dev" -y > nul
+# show info about build tools
   - set
   - ver
   - systeminfo
@@ -114,7 +116,7 @@ test_script:
   # run test suite
   #TODO: we reset %ERRORLEVEL% because we can't rely on Octave exit code
   - if "%WITH_MAKE%" == "yes" (
-      sh --login -c "cd \"$MEX_ROOT\" && mingw32-make $MAKE_OPTS test_vector_example"
+      sh --login -c "cd \"$MEX_ROOT\" && mingw32-make $MAKE_OPTS tests"
     ) else (
       %OCTAVE% --eval "test_vector_example;exit(0);" || ver > nul
     )
