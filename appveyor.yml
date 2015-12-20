@@ -15,10 +15,6 @@ platform: Win32
 configuration:
   - Debug
 
-environment:
-  global:
-    GENERATOR: Visual Studio 12 2013
-
 # Operating system (build VM template)
 os: Windows Server 2012 R2
 
@@ -32,6 +28,9 @@ branches:
 
 # global environment variables
 environment:
+  global:
+    GENERATOR: Visual Studio 12 2013
+
   MEX_ROOT: c:\projects\mex-it
   OCTAVE_HOME: c:\dev\octave-4.0.0
   #TODO: https://savannah.gnu.org/bugs/?41699
