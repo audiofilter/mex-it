@@ -74,3 +74,4 @@ Matlab/Octave Scripts to test
 * test_eigen_vector_example.m    -> Test of adding 2 Eigen Vectors of type 'double' - also checks if wrong type is used
 * test_eigen_matrix_example.m    -> Test of adding 2 Eigen Matrices of type 'double' - also checks if wrong type is used
 * test_vector_example.m          -> Test of adding 2 std::vector<double> - also checks if wrong type is used
+* test_types.m                   -> Make sure input types match expected types
