@@ -621,97 +621,90 @@ namespace mex_binding {
       // will cast to (T) type
 			assign_scalar(arg_idx, arg, mxGetScalar(prhs));
 		} else if (is_array_type<T>::value) {
+      bool ok = true;
+      std::ostringstream sout;
 			auto nr = mxGetM(prhs);
 			auto nc = mxGetN(prhs);
 			typedef typename inner_type<T>::type type;
 			if (nr != 1 && nc != 1) {
-				std::ostringstream sout;
 				sout << " argument " << arg_idx + 1 << " must be a 1-D matrix (got a " << nr << "*" << nc  << " matrix)";
 				throw invalid_args_exception(sout.str());
 			}
 			const long len = (long)std::max(nr,nc);
 			if (std::is_same<type, double>::value) {
 				if (!mxIsDouble(prhs) || mxIsComplex(prhs)) {
-					std::ostringstream sout;
-					sout << " argument " << arg_idx + 1 << " must be a vector of doubles";
-					throw invalid_args_exception(sout.str());
+          ok = false;
+					sout << " argument " << arg_idx + 1 << " must be a vector of doubles , not " << mxGetClassName(prhs) << "s\n";
 				}
 			} else if (std::is_same<type, float>::value) {
 				if (!mxIsSingle(prhs) || mxIsComplex(prhs)) {
-					std::ostringstream sout;
-					sout << " argument " << arg_idx + 1 << " must be a vector of single/float";
-					throw invalid_args_exception(sout.str());
+          ok = false;
+					sout << " argument " << arg_idx + 1 << " must be a vector of single/float, not " << mxGetClassName(prhs) << "s\n";
 				}
 			} else if (std::is_same<type, bool>::value) {
 				if (!mxIsLogical(prhs)) {
-					std::ostringstream sout;
-					sout << " argument " << arg_idx + 1 << " must be a vector of logical elements.";
-					throw invalid_args_exception(sout.str());
+          ok = false;
+					sout << " argument " << arg_idx + 1 << " must be a vector of logical elements, not " << mxGetClassName(prhs) << "s\n";
 				}
 			} else if (std::is_same<type, uint8_t>::value) {
 				if (!mxIsUint8(prhs) || mxIsComplex(prhs)) {
-					std::ostringstream sout;
-					sout << " argument " << arg_idx + 1 << " must be a vector of uint8";
-					throw invalid_args_exception(sout.str());
+          ok = false;
+					sout << " argument " << arg_idx + 1 << " must be a vector of uint8, not " << mxGetClassName(prhs) << "s\n";
 				}
 			} else if (std::is_same<type, int8_t>::value) {
 				if (!mxIsInt8(prhs) || mxIsComplex(prhs)) {
-					std::ostringstream sout;
-					sout << " argument " << arg_idx + 1 << " must be a vector of int8";
-					throw invalid_args_exception(sout.str());
+          ok = false;
+					sout << " argument " << arg_idx + 1 << " must be a vector of int8, not " << mxGetClassName(prhs) << "s\n";
 				}
 			} else if (std::is_same<type, int16_t>::value ||
 								 (std::is_same<type, short>::value && sizeof(short) == sizeof(int16_t))) {
 				if (!mxIsInt16(prhs) || mxIsComplex(prhs)) {
-					std::ostringstream sout;
-					sout << " argument " << arg_idx + 1 << " must be a vector of int16";
-					throw invalid_args_exception(sout.str());
+          ok = false;
+					sout << " argument " << arg_idx + 1 << " must be a vector of int16, not " << mxGetClassName(prhs) << "s\n";
 				}
 			} else if (std::is_same<type, uint16_t>::value ||
 								 (std::is_same<type, unsigned short>::value && sizeof(unsigned short) == sizeof(uint16_t))) {
 				if (!mxIsUint16(prhs) || mxIsComplex(prhs)) {
-					std::ostringstream sout;
-					sout << " argument " << arg_idx + 1 << " must be a vector of uint16";
-					throw invalid_args_exception(sout.str());
+          ok = false;
+					sout << " argument " << arg_idx + 1 << " must be a vector of uint16, not " << mxGetClassName(prhs) << "s\n";
 				}
 			} else if (std::is_same<type, int32_t>::value ||
 								 (std::is_same<type, int>::value && sizeof(int) == sizeof(int32_t)) ||
 								 (std::is_same<type, long>::value && sizeof(long) == sizeof(int32_t))) {
 				if (!mxIsInt32(prhs) || mxIsComplex(prhs)) {
-					std::ostringstream sout;
-					sout << " argument " << arg_idx + 1 << " must be a vector of int32";
-					throw invalid_args_exception(sout.str());
+          ok = false;
+					sout << " argument " << arg_idx + 1 << " must be a vector of int32, not " << mxGetClassName(prhs) << "s\n";
 				}
 			} else if (std::is_same<type, uint32_t>::value ||
 								 (std::is_same<type, unsigned int>::value && sizeof(unsigned int) == sizeof(uint32_t)) ||
 								 (std::is_same<type, unsigned long>::value && sizeof(unsigned long) == sizeof(uint32_t))) {
 				if (!mxIsUint32(prhs) || mxIsComplex(prhs)) {
-					std::ostringstream sout;
-					sout << " argument " << arg_idx + 1 << " must be a vector of uint32";
-					throw invalid_args_exception(sout.str());
+          ok = false;
+					sout << " argument " << arg_idx + 1 << " must be a vector of uint32, not " << mxGetClassName(prhs) << "s\n";
 				}
 			} else if (std::is_same<type, uint64_t>::value ||
 								 (std::is_same<type, unsigned int>::value && sizeof(unsigned int) == sizeof(uint64_t)) ||
 								 (std::is_same<type, unsigned long>::value && sizeof(unsigned long) == sizeof(uint64_t))) {
 				if (!mxIsUint64(prhs) || mxIsComplex(prhs)) {
-					std::ostringstream sout;
-					sout << " argument " << arg_idx + 1 << " must be a vector of uint64";
-					throw invalid_args_exception(sout.str());
+          ok = false;
+					sout << " argument " << arg_idx + 1 << " must be a vector of uint64, not " << mxGetClassName(prhs) << "s\n";
 				}
 			} else if (std::is_same<type, int64_t>::value ||
 								 (std::is_same<type, int>::value && sizeof(int) == sizeof(int64_t)) ||
 								 (std::is_same<type, long>::value && sizeof(long) == sizeof(int64_t))) {
 				if (!mxIsInt64(prhs) || mxIsComplex(prhs)) {
-					std::ostringstream sout;
-					sout << " argument " << arg_idx + 1 << " must be a vector of int64";
-					throw invalid_args_exception(sout.str());
+          ok = false;
+					sout << " argument " << arg_idx + 1 << " must be a vector of int64, not " << mxGetClassName(prhs) << "s\n";
 				}
       } else {
-        std::ostringstream sout;
-        sout << " argument " << arg_idx + 1 << " must be a vector of a pod type";
-        throw invalid_args_exception(sout.str());
+        ok = false;
+        sout << " argument " << arg_idx + 1 << " must be a vector of a pod type, not " << mxGetClassName(prhs) << "s\n";
       }
-			populate_to_vector(arg_idx, arg, prhs, len);
+      if (ok) {
+        populate_to_vector(arg_idx, arg, prhs, len);
+      } else {
+				throw invalid_args_exception(sout.str());
+      }
 		} else if (is_eigen_matrix<T>::value) {
 			typedef typename inner_type<T>::type type;
 			const int num_dims = mxGetNumberOfDimensions(prhs);
@@ -727,35 +720,35 @@ namespace mex_binding {
 			if (std::is_same<type, double>::value) {
 				if (!mxIsDouble(prhs) || mxIsComplex(prhs)) {
 					std::ostringstream sout;
-					sout << " argument " << arg_idx + 1 << " must be a matrix of doubles";
+					sout << " argument " << arg_idx + 1 << " must be a matrix of doubles, not " << mxGetClassName(prhs) << "s\n";
 					throw invalid_args_exception(sout.str());
 				}
 				populate_to_eigen_mat(arg_idx, arg, prhs, nc, nr);
 			} else if (std::is_same<type, float>::value) {
 				if (!mxIsSingle(prhs) || mxIsComplex(prhs)) {
 					std::ostringstream sout;
-					sout << " argument " << arg_idx + 1 << " must be a matrix of single/float";
+					sout << " argument " << arg_idx + 1 << " must be a matrix of single/float, not " << mxGetClassName(prhs) << "s\n";
 					throw invalid_args_exception(sout.str());
 				}
 				populate_to_eigen_mat(arg_idx, arg, prhs, nc, nr);
 			} else if (std::is_same<type, bool>::value) {
 				if (!mxIsLogical(prhs)) {
 					std::ostringstream sout;
-					sout << " argument " << arg_idx + 1 << " must be a matrix of logical elements.";
+					sout << " argument " << arg_idx + 1 << " must be a matrix of logical elements, not " << mxGetClassName(prhs) << "s\n";
 					throw invalid_args_exception(sout.str());
 				}
 				populate_to_eigen_mat(arg_idx, arg, prhs, nc, nr);
 			} else if (std::is_same<type, uint8_t>::value) {
 				if (!mxIsUint8(prhs) || mxIsComplex(prhs)) {
 					std::ostringstream sout;
-					sout << " argument " << arg_idx + 1 << " must be a matrix of uint8";
+					sout << " argument " << arg_idx + 1 << " must be a matrix of uint8, not " << mxGetClassName(prhs) << "s\n";
 					throw invalid_args_exception(sout.str());
 				}
 				populate_to_eigen_mat(arg_idx, arg, prhs, nc, nr);
 			} else if (std::is_same<type, int8_t>::value) {
 				if (!mxIsInt8(prhs) || mxIsComplex(prhs)) {
 					std::ostringstream sout;
-					sout << " argument " << arg_idx + 1 << " must be a matrix of int8";
+					sout << " argument " << arg_idx + 1 << " must be a matrix of int8, not " << mxGetClassName(prhs) << "s\n";
 					throw invalid_args_exception(sout.str());
 				}
 				populate_to_eigen_mat(arg_idx, arg, prhs, nc, nr);
@@ -763,7 +756,7 @@ namespace mex_binding {
 								 (std::is_same<type, short>::value && sizeof(short) == sizeof(int16_t))) {
 				if (!mxIsInt16(prhs) || mxIsComplex(prhs)) {
 					std::ostringstream sout;
-					sout << " argument " << arg_idx + 1 << " must be a matrix of int16";
+					sout << " argument " << arg_idx + 1 << " must be a matrix of int16, not " << mxGetClassName(prhs) << "s\n";
 					throw invalid_args_exception(sout.str());
 				}
 				populate_to_eigen_mat(arg_idx, arg, prhs, nc, nr);
@@ -771,7 +764,7 @@ namespace mex_binding {
 								 (std::is_same<type, unsigned short>::value && sizeof(unsigned short) == sizeof(uint16_t))) {
 				if (!mxIsUint16(prhs) || mxIsComplex(prhs)) {
 					std::ostringstream sout;
-					sout << " argument " << arg_idx + 1 << " must be a matrix of uint16";
+					sout << " argument " << arg_idx + 1 << " must be a matrix of uint16, not " << mxGetClassName(prhs) << "s\n";
 					throw invalid_args_exception(sout.str());
 				}
 				populate_to_eigen_mat(arg_idx, arg, prhs, nc, nr);
@@ -780,7 +773,7 @@ namespace mex_binding {
 								 (std::is_same<type, long>::value && sizeof(long) == sizeof(int32_t))) {
 				if (!mxIsInt32(prhs) || mxIsComplex(prhs)) {
 					std::ostringstream sout;
-					sout << " argument " << arg_idx + 1 << " must be a matrix of int32";
+					sout << " argument " << arg_idx + 1 << " must be a matrix of int32, not " << mxGetClassName(prhs) << "s\n";
 					throw invalid_args_exception(sout.str());
 				}
 				populate_to_eigen_mat(arg_idx, arg, prhs, nc, nr);
@@ -789,7 +782,7 @@ namespace mex_binding {
 								 (std::is_same<type, unsigned long>::value && sizeof(unsigned long) == sizeof(uint32_t))) {
 				if (!mxIsUint32(prhs) || mxIsComplex(prhs)) {
 					std::ostringstream sout;
-					sout << " argument " << arg_idx + 1 << " must be a matrix of uint32";
+					sout << " argument " << arg_idx + 1 << " must be a matrix of uint32, not " << mxGetClassName(prhs) << "s\n";
 					throw invalid_args_exception(sout.str());
 				}
 				populate_to_eigen_mat(arg_idx, arg, prhs, nc, nr);
@@ -798,7 +791,7 @@ namespace mex_binding {
 								 (std::is_same<type, unsigned long>::value && sizeof(unsigned long) == sizeof(uint64_t))) {
 				if (!mxIsUint64(prhs) || mxIsComplex(prhs)) {
 					std::ostringstream sout;
-					sout << " argument " << arg_idx + 1 << " must be a matrix of uint64";
+					sout << " argument " << arg_idx + 1 << " must be a matrix of uint64, not " << mxGetClassName(prhs) << "s\n";
 					throw invalid_args_exception(sout.str());
 				}
 				populate_to_eigen_mat(arg_idx, arg, prhs, nc, nr);
@@ -807,7 +800,7 @@ namespace mex_binding {
 								 (std::is_same<type, long>::value && sizeof(long) == sizeof(int64_t))) {
 				if (!mxIsInt64(prhs) || mxIsComplex(prhs)) {
 					std::ostringstream sout;
-					sout << " argument " << arg_idx + 1 << " must be a matrix of int64";
+					sout << " argument " << arg_idx + 1 << " must be a matrix of int64, not " << mxGetClassName(prhs) << "s\n";
 					throw invalid_args_exception(sout.str());
 				}
 				populate_to_eigen_mat(arg_idx, arg, prhs, nc, nr);
@@ -852,9 +845,9 @@ namespace mex_binding {
 	
 	template<typename funct, std::size_t I=0, std::size_t N, typename Ts> inline typename std::enable_if< (I<N), void>::type
 	validate_args(const mxArray *array[], int& arg_idx, Ts& arg) {
-		if (function_traits<funct>::template is_input<I>::value) {
-			//mexPrintf("calling v & p in loop arg_idx = %d\n",arg_idx);
-			validate_and_populate_arg(arg_idx, array[arg_idx], std::get<I>(arg));
+    if (function_traits<funct>::template is_input<I>::value) {
+      //mexPrintf("calling v & p in loop arg_idx = %d\n",arg_idx);
+      validate_and_populate_arg(arg_idx, array[arg_idx], std::get<I>(arg));
 			arg_idx++;
 		}
 		validate_args<funct,I+1,N>(array,arg_idx,arg);

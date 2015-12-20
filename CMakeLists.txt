@@ -51,7 +51,7 @@ if (EIGEN_FOUND)
 		set_property(TARGET ${t} PROPERTY CXX_STANDARD 11)
 	ENDFOREACH()
 	
-	set(EIG_MEXES eigen_add eigen_vector_example)
+	set(EIG_MEXES eigen_add eigen_vector_example eigen_vector_int_example)
 
 	FOREACH(t ${EIG_MEXES})
 		if (OCTAVE_FOUND)
@@ -65,7 +65,7 @@ else()
 endif(EIGEN_FOUND)
 
 
-set(MEXES simple_example vector_example types_example)
+set(MEXES simple_example vector_example vector_int_example types_example)
 
 # This comes from FindMATLAB.cmake
 FOREACH(t ${MEXES})
