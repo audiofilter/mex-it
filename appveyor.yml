@@ -65,7 +65,7 @@ install:
   - copy /y "%OCTAVE_HOME%\bin\libopenblas.dll" "%OCTAVE_HOME%\bin\libblas.dll" > nul
   - set "PATH=%OCTAVE_HOME%\bin;%PATH%"
   - ps: Start-FileDownload "http://bitbucket.org/eigen/eigen/get/3.3-beta1.zip" -Filename eigen.zip
-  - 7z x "c:\dev\eigen.zip" -o"c:\dev" -y > nul
+  - 7z e x "c:\dev\eigen.zip" -o"c:\dev" -y > nul
   - dir "c:\dev"
 # show info about build tools
   - set
