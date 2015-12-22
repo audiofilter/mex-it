@@ -11,5 +11,5 @@ install:
 before_script:
   - mkdir build
   - cd build
-  - cmake ..
+  - cmake ../test
 script: make
