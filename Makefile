@@ -11,8 +11,8 @@ clean:
 	rm -rf $(build)
 
 tests:
-	octave -q test_vector_example.m
-	octave -q test_eigen_vector_example.m
-	octave -q test_eigen_matrix_example.m
-	octave -q test_types.m
+	octave -q ./test/test_vector_example.m
+	octave -q ./test/test_eigen_vector_example.m
+	octave -q ./test/test_eigen_matrix_example.m
+	octave -q ./test/test_types.m
 

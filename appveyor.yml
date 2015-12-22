@@ -68,7 +68,7 @@ install:
   - dir "c:\dev"
   - 7z x "c:\dev\eigen.zip" -o"%MEX_ROOT%" -y > nul
   - cd "%MEX_ROOT%"
-  - mv eigen-eigen-ce5a455b34c0 eigen3
+  - mv eigen-eigen-ce5a455b34c0 .\test\eigen3
   - dir "%MEX_ROOT%"
 # show info about build tools
   #- set
