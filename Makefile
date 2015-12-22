@@ -3,8 +3,8 @@ build = build
 all: $(build)/Makefile
 	cd $(build) && make 
 
-$(build)/Makefile: CMakeLists.txt
-	mkdir -p $(build) && cd $(build) && cmake .. -G"Unix Makefiles"
+$(build)/Makefile: ./test/CMakeLists.txt
+	mkdir -p $(build) && cd $(build) && cmake ../test -G"Unix Makefiles"
 
 clean:
 	$(MAKE) -C $(build) clean
