@@ -107,7 +107,9 @@ if(NOT Matlab_ADDITIONAL_VERSIONS)
   set(Matlab_ADDITIONAL_VERSIONS)
 endif()
 
+set(Matlab_FIND_DEBUG FALSE)
 set(Matlab_VERSIONS_MAPPING
+        "R2014b" "8.4"
   "R2013b" "8.2"
   "R2013a" "8.1"
   "R2012b" "8.0"
@@ -542,6 +544,9 @@ function(add_matlab_mex )
   set(prefix _matlab_addmex_prefix)
   cmake_parse_arguments(${prefix} "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
   
+    if (Matlab_FIND_DEBUG)
+        message(STATUS "[Matlab] ${oneValueArgs} && ${multiValueArgs}" && "${prefix}_NAME" && ${prefix}_OUTPUT_NAME)
+    endif ()
   if(NOT ${prefix}_NAME)
     message(FATAL_ERROR "[Matlab] The MEX file name cannot be empty")
   endif()
@@ -550,13 +555,24 @@ function(add_matlab_mex )
     set(${prefix}_OUTPUT_NAME ${${prefix}_NAME})
   endif()
   
+    if (Matlab_FIND_DEBUG)
+        message(STATUS "[Matlab] output_name ${${prefix}_NAME}")
+    endif ()
   add_library(${${prefix}_NAME}
     SHARED 
       ${${prefix}_SRC}
       ${${prefix}_DOCUMENTATION}
       ${${prefix}_UNPARSED_ARGUMENTS})
+    if (Matlab_FIND_DEBUG)
+        message(STATUS "[Matlab] output_name ${${prefix}_SRC} &&
+            ${${prefix}_DOCUMENTATION} &&
+            ${${prefix}_UNPARSED_ARGUMENTS}")
+    endif ()
   target_include_directories(${${prefix}_NAME} PRIVATE ${Matlab_INCLUDE_DIRS})
   
+    if (Matlab_FIND_DEBUG)
+        message(STATUS "libraries ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} ${${prefix}_LINK_TO}")
+    endif ()
   target_link_libraries(${${prefix}_NAME} ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} ${${prefix}_LINK_TO})
   set_target_properties(${${prefix}_NAME}
       PROPERTIES 
@@ -876,6 +892,9 @@ set(_matlab_required_variables)
 
 
 # the MEX library/header are required
+    if (Matlab_FIND_DEBUG)
+        message(STATUS "[Matlab] Matlab include dir: ${Matlab_INCLUDE_DIRS}")
+    endif ()
 find_path(
   Matlab_INCLUDE_DIRS
   mex.h
@@ -884,6 +903,9 @@ find_path(
   )
 list(APPEND _matlab_required_variables Matlab_INCLUDE_DIRS)
 
+    if (Matlab_FIND_DEBUG)
+        message(STATUS "[Matlab] Matlab library dir: ${Matlab_MEX_LIBRARY}")
+    endif ()
 find_library(
   Matlab_MEX_LIBRARY
   mex
@@ -901,7 +923,8 @@ list(APPEND _matlab_required_variables Matlab_ROOT_DIR)
 
 # component Mex Compiler
 list(FIND Matlab_FIND_COMPONENTS MEX_COMPILER _matlab_find_mex_compiler)
-if(_matlab_find_mex_compiler GREATER -1)
+    #if(_matlab_find_mex_compiler GREATER -1)
+    if (_matlab_find_mex_compiler EQUAL -1)
   find_program(
     Matlab_MEX_COMPILER
     "mex"
@@ -916,9 +939,13 @@ if(_matlab_find_mex_compiler GREATER -1)
 endif()  
 unset(_matlab_find_mex_compiler)
 
+    if (Matlab_FIND_DEBUG)
+        message(STATUS "[Matlab] Matlab mex compiler: ${Matlab_MEX_COMPILER}")
+    endif ()
 # component Matlab program
 list(FIND Matlab_FIND_COMPONENTS MAIN_PROGRAM _matlab_find_matlab_program)
-if(_matlab_find_matlab_program GREATER -1)
+    #if(_matlab_find_matlab_program GREATER -1)
+    if (_matlab_find_matlab_program EQUAL -1)
   # todo cleanup with code above
   if(NOT DEFINED Matlab_PROGRAM)
     find_program(
@@ -936,9 +963,13 @@ if(_matlab_find_matlab_program GREATER -1)
 endif()  
 unset(_matlab_find_matlab_program)
 
+    if (Matlab_FIND_DEBUG)
+        message(STATUS "[Matlab] Matlab program: ${Matlab_PROGRAM}")
+    endif ()
 # Component MX library
 list(FIND Matlab_FIND_COMPONENTS MX_LIBRARY _matlab_find_mx)
-if(_matlab_find_mx GREATER -1)
+    #if(_matlab_find_mx GREATER -1)
+    if (_matlab_find_mx EQUAL -1)
   find_library(
     Matlab_MX_LIBRARY
     mx
@@ -946,16 +977,23 @@ if(_matlab_find_mx GREATER -1)
     NO_DEFAULT_PATH
   )
   
+        if (Matlab_FIND_DEBUG)
+            message(STATUS "[Matlab] Matlab mx library: ${Matlab_MX_LIBRARY}")
+        endif ()
   if(Matlab_MX_LIBRARY)
     set(Matlab_MX_LIBRARY_FOUND TRUE)
   endif()
 endif()
 unset(_matlab_find_mx)
 
+    if (Matlab_FIND_DEBUG)
+        message(STATUS "[Matlab] Matlab mx library: ${_matlab_lib_dir_for_search}")
+    endif ()
 
 # Component ENG library
 list(FIND Matlab_FIND_COMPONENTS ENG_LIBRARY _matlab_find_eng)
-if(_matlab_find_eng GREATER -1)
+    #if(_matlab_find_eng GREATER -1)
+    if (_matlab_find_eng EQUAL -1)
   find_library(
     Matlab_ENG_LIBRARY
     eng
@@ -974,6 +1012,9 @@ endif(${Matlab_VERSION_STRING} STREQUAL "NOTFOUND")
 
 set(Matlab_LIBRARIES ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} ${Matlab_ENG_LIBRARY})
 
+if (Matlab_FIND_DEBUG)
+    message(STATUS "[Matlab] set matlab libraries: ${Matlab_LIBRARIES}")
+endif ()
 unset(_matlab_required_variables)
 unset(_matlab_bin_prefix)
 unset(_matlab_bin_suffix_32bits)
@@ -982,7 +1023,19 @@ unset(_matlab_current_suffix)
 unset(_matlab_lib_dir_for_search)
 unset(_matlab_lib_prefix_for_search)
 
+if (Matlab_FIND_DEBUG)
+    message(STATUS "[Matlab] matlab found: ${Matlab_INCLUDE_DIRS} and ${Matlab_LIBRARIES}")
+endif ()
 if(Matlab_INCLUDE_DIRS AND Matlab_LIBRARIES)
+    # handle REQUIRED and QUIET options
+    include(FindPackageHandleStandardArgs)
+    if (CMAKE_VERSION LESS 2.8.3)
+        find_package_handle_standard_args(MATLAB DEFAULT_MSG Matlab_INCLUDE_DIRS Matlab_LIBRARIES Matlab_ROOT_DIR)
+    else ()
+        find_package_handle_standard_args(MATLAB REQUIRED_VARS Matlab_INCLUDE_DIRS Matlab_LIBRARIES VERSION_VAR Matlab_ROOT_DIR)
+    endif ()
+
+
   mark_as_advanced(
     Matlab_LIBRARIES
     Matlab_MEX_LIBRARY
