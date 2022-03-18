@@ -353,7 +353,7 @@ namespace mex_binding {
 													 const mxArray* src, long nc, long nr) {
 		assert(nr > 0 && nc > 0);
 		m.resize(nr,nc);
-		memcpy(m.data(),(const T*)mxGetData(src),nr*nc*sizeof(double));
+		memcpy(m.data(),(const T*)mxGetData(src),nr*nc*sizeof(T));
 	}
 #endif
 
@@ -377,7 +377,7 @@ namespace mex_binding {
 													const mxArray* src, long nc) {
 		assert(nc > 0);
 		m.resize(nc);
-		memcpy(m.data(),(const T*)mxGetPr(src),nc*sizeof(double));
+		memcpy(m.data(),(const T*)mxGetPr(src),nc*sizeof(T));
 	}
 #endif
 	
